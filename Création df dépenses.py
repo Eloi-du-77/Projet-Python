@@ -15,6 +15,39 @@ df_longue = df_filtree.melt(
 
 df_longue.rename(columns={'geo\\TIME_PERIOD':'pays'}, inplace=True)
 
+
+pays_dict = {
+    'AT': 'Autriche',
+    'BE': 'Belgique',
+    'BG': 'Bulgarie',
+    'HR': 'Croatie',
+    'CY': 'Chypre',
+    'CZ': 'République tchèque',
+    'DK': 'Danemark',
+    'EE': 'Estonie',
+    'FI': 'Finlande',
+    'FR': 'France',
+    'DE': 'Allemagne',
+    'GR': 'Grèce',
+    'HU': 'Hongrie',
+    'IE': 'Irlande',
+    'IT': 'Italie',
+    'LV': 'Lettonie',
+    'LT': 'Lituanie',
+    'LU': 'Luxembourg',
+    'MT': 'Malte',
+    'NL': 'Pays-Bas',
+    'PL': 'Pologne',
+    'PT': 'Portugal',
+    'RO': 'Roumanie',
+    'SK': 'Slovaquie',
+    'SI': 'Slovénie',
+    'ES': 'Espagne',
+    'SE': 'Suède'
+}
+
+df_longue['pays'] = df_longue['pays'].map(pays_dict)
+
 print(df_longue.head(30))
 tableau_3d = df_longue.pivot_table(
     index='pays',

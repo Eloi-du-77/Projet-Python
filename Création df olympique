@@ -1,47 +1,29 @@
-import pandas as pd
 import requests
+import pandas as pd
 from bs4 import BeautifulSoup
-from time import sleep
 
-# 🟦 Liste des années des JO d'été depuis 1996
-editions = [1996, 2000, 2004, 2008, 2012, 2016, 2020, 2024]
+editions = {
+    2012: "https://en.wikipedia.org/wiki/2012_Summer_Olympics_medal_table",
+    2016: "https://en.wikipedia.org/wiki/2016_Summer_Olympics_medal_table",
+    2020: "https://en.wikipedia.org/wiki/2020_Summer_Olympics_medal_table",
+    2024: "https://en.wikipedia.org/wiki/2024_Summer_Olympics_medal_table",
+}
 
-tous_les_df = []
+records = []
 
-for annee in editions:
-    url = f"https://fr.wikipedia.org/wiki/Tableau_des_médailles_des_Jeux_olympiques_d%27été_de_{annee}"
-    r = requests.get(url)
-    r.raise_for_status()
-    soup = BeautifulSoup(r.text, "html.parser")
-
-    # Trouver le tableau des médailles
+for year, url in editions.items():
+    resp = requests.get(url)
+    soup = BeautifulSoup(resp.content, "html.parser")
+    # repérer le bon tableau — en général le premier <table class="wikitable sortable">
     table = soup.find("table", {"class": "wikitable sortable"})
     if table is None:
-        print(f"Pas de tableau trouvé pour {annee}")
-        continue
-
+        table = soup.find("table", {"class": "wikitable"})
     df = pd.read_html(str(table))[0]
+    # On suppose les colonnes : Rank, NOC / Country, Gold, Silver, Bronze, Total
+    df = df.rename(columns={df.columns[1]: "country", "Gold": "gold", "Silver": "silver", "Bronze": "bronze", "Total": "total"})
+    df = df[["country", "gold", "silver", "bronze", "total"]]
+    df["year"] = year
+    records.append(df)
 
-    df["annee"] = annee
-
-
-    df = df.rename(columns={
-        "Nation": "pays",
-        "Or": "or",
-        "Argent": "argent",
-        "Bronze": "bronze",
-        "Total": "total"
-    })
-
-    tous_les_df.append(df)
-
-    sleep(1) 
-
-
-df_tout = pd.concat(tous_les_df, ignore_index=True, sort=False)
-
-
-df_tout.to_csv("medailles_ete_1996_2020.csv", index=False)
-
-print("Terminé — nombre de lignes :", len(df_tout))
-print(df_tout.head())
+medals = pd.concat(records, ignore_index=True)
+print(medals.head())
