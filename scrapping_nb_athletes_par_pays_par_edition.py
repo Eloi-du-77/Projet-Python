@@ -62,7 +62,7 @@ urls = {
         2020: "https://en.wikipedia.org/wiki/United_States_at_the_2020_Summer_Paralympics",
         2024: "https://en.wikipedia.org/wiki/United_States_at_the_2024_Summer_Paralympics",
     },
-    "Pays-bas": {
+    "Pays-Bas": {
         2012: "https://en.wikipedia.org/wiki/Netherlands_at_the_2012_Summer_Paralympics",
         2016: "https://en.wikipedia.org/wiki/Netherlands_at_the_2016_Summer_Paralympics",
         2020: "https://en.wikipedia.org/wiki/Netherlands_at_the_2020_Summer_Paralympics",
@@ -110,7 +110,7 @@ def extract_athletes(url):
 annees = [2012, 2016, 2020, 2024]
 pays_liste = list(urls.keys())
 
-df = pd.DataFrame(index=pays_liste, columns=annees)
+df_nb_athletes = pd.DataFrame(index=pays_liste, columns=annees)
 
 for pays in urls:
     for annee, valeur in urls[pays].items():
@@ -119,7 +119,7 @@ for pays in urls:
 
         # --- Cas 1 : entier déjà fourni ---
         if isinstance(valeur, int):
-            df.loc[pays, annee] = valeur
+            df_nb_athletes.loc[pays, annee] = valeur
             print(f"OK (valeur directe → {valeur})")
             continue
         
@@ -127,22 +127,22 @@ for pays in urls:
         elif isinstance(valeur, str) and valeur.startswith("http"):
             try:
                 nb = extract_athletes(valeur)
-                df.loc[pays, annee] = nb
+                df_nb_athletes.loc[pays, annee] = nb
                 print(f"Scrapé → {nb}")
             except Exception as e:
-                df.loc[pays, annee] = None
+                df_nb_athletes.loc[pays, annee] = None
                 print(f"Erreur scraping : {e}")
             continue
         
         # --- Cas 3 : format inconnu ---
         else:
-            df.loc[pays, annee] = None
+            df_nb_athletes.loc[pays, annee] = None
             print("Valeur non reconnue")
 
 # ---------------------------------------
 # 4) Résultat final
 # ---------------------------------------
 print("\n===== TABLEAU FINAL =====")
-print(df)
+print(df_nb_athletes)
 
-df.to_csv("nb_athletes_par_pays_par_edition.csv")
+df_nb_athletes.to_csv("nb_athletes_par_pays_par_edition.csv")

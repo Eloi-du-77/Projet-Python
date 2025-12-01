@@ -1,4 +1,7 @@
 #!/opt/python/bin/python3.13
+from scrapping_nb_athletes_par_pays_par_edition import df_nb_athletes
+
+print(df_nb_athletes)
 
 import pandas as pd
 
@@ -8,7 +11,7 @@ YEARS = [2012, 2016, 2020, 2024]
 data = {
     "France":        [34, 28, 55, 54],
     "Allemagne":       [101, 88, 57, 46],
-    "Royaume-Uni   ":[120, 121, 124, 103],
+    "Royaume-Uni": [120, 121, 124, 103],
     "Pays-Bas":   [39, 62, 59, 56],
     "Norvège":        [18, 8, 4, 7],
     "Etats-Unis": [98, 121, 104, 138],
@@ -18,7 +21,10 @@ data = {
     "Japon":         [10, 24, 51, 33],
 }
 
-df = pd.DataFrame(data, index=YEARS).T
-df.to_csv("paralympics_medals_selected_countries.csv")
+df_medals = pd.DataFrame(data, index=YEARS).T
+df_medals.to_csv("paralympics_medals_selected_countries.csv")
 print("✅ CSV généré : paralympics_medals_selected_countries.csv")
-print(df)
+print(df_medals)
+
+df_medals_per_athletes = df_medals / df_nb_athletes
+print(df_medals_per_athletes)
