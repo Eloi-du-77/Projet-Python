@@ -73,10 +73,6 @@ df_merge['loisirs_sports_par_habitant'] = df_merge['loisirs_sports'] * df_merge[
 df_merge['maladie_invalidite_par_habitant'] = df_merge['maladie_invalidite'] * df_merge['pib_habitant']
 
 
-
-
-
-
 df_merge.to_pickle("df_tous_pays.pkl")
 
 
@@ -96,46 +92,6 @@ print(f"\nAperçu du DataFrame fusionné:")
 print(df_merge.query('pays == "France" & annee == 2012'))
 print(f"\nNombre de valeurs manquantes par colonne:")
 print(df_merge.isnull().sum())
-
-
-# 1. Statistiques de base
-print("\n1. STATISTIQUES DE BASE (colonnes numériques)")
-print("-"*80)
-print(df_merge.describe())
-
-# 2. Informations générales sur le DataFrame
-print("\n\n2. INFORMATIONS GÉNÉRALES")
-print("-"*80)
-print(f"Nombre de lignes : {len(df_merge)}")
-print(f"Nombre de colonnes : {len(df_merge.columns)}")
-print(f"\nTypes de données :")
-print(df_merge.dtypes)
-
-# 3. Valeurs manquantes
-print("\n\n3. VALEURS MANQUANTES")
-print("-"*80)
-missing = df_merge.isnull().sum()
-missing_pct = (df_merge.isnull().sum() / len(df_merge)) * 100
-missing_df = pd.DataFrame({
-    'Valeurs manquantes': missing,
-    'Pourcentage (%)': missing_pct
-})
-print(missing_df[missing_df['Valeurs manquantes'] > 0])
-
-# 4. Statistiques supplémentaires pour colonnes numériques
-print("\n\n4. STATISTIQUES DÉTAILLÉES (colonnes numériques)")
-print("-"*80)
-numeric_cols = df_merge.select_dtypes(include=[np.number]).columns
-for col in numeric_cols:
-    print(f"\n{col}:")
-    print(f"  Moyenne : {df_merge[col].mean():.4f}")
-    print(f"  Médiane : {df_merge[col].median():.4f}")
-    print(f"  Écart-type : {df_merge[col].std():.4f}")
-    print(f"  Min : {df_merge[col].min():.4f}")
-    print(f"  Max : {df_merge[col].max():.4f}")
-    print(f"  Q1 (25%) : {df_merge[col].quantile(0.25):.4f}")
-    print(f"  Q3 (75%) : {df_merge[col].quantile(0.75):.4f}")
-    print(f"  Valeurs uniques : {df_merge[col].nunique()}")
 
 
 
