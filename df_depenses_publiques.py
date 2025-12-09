@@ -48,15 +48,17 @@ pays_dict = {
 
 df_longue['pays'] = df_longue['pays'].map(pays_dict)
 
-print(df_longue.head(30))
-tableau_3d = df_longue.pivot_table(
-    index='pays',
-    columns=['annee', 'cofog99'],
-    values='depense',
-    aggfunc='sum'  
-)
-cofog_labels = {'GF0602': 'Aménagement du territoire', "GF0801": "Loisirs et sports", "GF1001" : "Maladie / Invalidité"}
+cofog_labels = {'GF0602': 'amenagement_territoire', "GF0801": "loisirs_sports", "GF1001" : "maladie_invalidite"}
 
-tableau_3d.rename(columns=cofog_labels, level=1, inplace=True)
+df_longue['annee'] = df_longue['annee'].astype('float64')
+df_longue['cofog99'] = df_longue['cofog99'].map(cofog_labels)
+df_longue.rename(columns={'cofog99': 'type_depense'}, inplace=True)
 
-print(tableau_3d.head())
+df_longue = df_longue.pivot_table(
+    index=['pays', 'annee'],
+    columns='type_depense',
+    values='depense', 
+    aggfunc='first'
+).reset_index()
+
+df_longue.to_pickle("df_depenses_publiques.pkl")
