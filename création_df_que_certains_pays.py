@@ -99,7 +99,7 @@ for idx, annee in enumerate(annees):
     df_annee = df_filtree[df_filtree['annee'] == annee].copy()
     
     # Supprimer les valeurs manquantes
-    df_annee = df_annee.dropna(subset=['idh', 'total_medailles_paralympiquespar_athlete'])
+    df_annee = df_annee.dropna(subset=['idh', 'total_medailles_paralympiques_par_athlete'])
     
     # Créer le scatter plot
     ax.scatter(df_annee['idh'], 

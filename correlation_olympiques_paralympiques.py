@@ -61,6 +61,9 @@ plt.show()
 # Afficher la matrice de corrélation proprement formatée dans la console
 print("Matrice de corrélation entre les médailles par athlète aux JO et aux Paralympiques (raccourcie) :")
 print(correlation_matrix)
+correlation_total_medailles = correlation_matrix.loc['Total Olympiques', 'Total Paralympiques']
 
+# Afficher la corrélation
+print(f"La corrélation entre le total des médailles olympiques et paralympiques est : {correlation_total_medailles:.4f}")
 
 
