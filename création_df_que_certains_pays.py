@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 
 df_tous_pays=pd.read_pickle("df_tous_pays.pkl")
 
-# Vérifier les colonnes disponibles
-print("Colonnes disponibles dans df_tous_pays:")
-print(df_tous_pays.columns.tolist())
-print()
+# # Vérifier les colonnes disponibles
+# print("Colonnes disponibles dans df_tous_pays:")
+# print(df_tous_pays.columns.tolist())
+# print()
 
 # Filtrer les données entre 2012 et 2024
 df_periode = df_tous_pays[(df_tous_pays['annee'] >= 2012) & (df_tous_pays['annee'] <= 2024)].copy()
@@ -46,8 +46,6 @@ print("\n\n2. INFORMATIONS GÉNÉRALES")
 print("-"*80)
 print(f"Nombre de lignes : {len(df_tous_pays)}")
 print(f"Nombre de colonnes : {len(df_tous_pays.columns)}")
-print(f"\nTypes de données :")
-print(df_tous_pays.dtypes)
 
 # 3. Valeurs manquantes
 print("\n\n3. VALEURS MANQUANTES")
@@ -60,20 +58,20 @@ missing_df = pd.DataFrame({
 })
 print(missing_df[missing_df['Valeurs manquantes'] > 0])
 
-# 4. Statistiques supplémentaires pour colonnes numériques
-print("\n\n4. STATISTIQUES DÉTAILLÉES (colonnes numériques)")
-print("-"*80)
-numeric_cols = df_tous_pays.select_dtypes(include=[np.number]).columns
-for col in numeric_cols:
-    print(f"\n{col}:")
-    print(f"  Moyenne : {df_tous_pays[col].mean():.4f}")
-    print(f"  Médiane : {df_tous_pays[col].median():.4f}")
-    print(f"  Écart-type : {df_tous_pays[col].std():.4f}")
-    print(f"  Min : {df_tous_pays[col].min():.4f}")
-    print(f"  Max : {df_tous_pays[col].max():.4f}")
-    print(f"  Q1 (25%) : {df_tous_pays[col].quantile(0.25):.4f}")
-    print(f"  Q3 (75%) : {df_tous_pays[col].quantile(0.75):.4f}")
-    print(f"  Valeurs uniques : {df_tous_pays[col].nunique()}")
+# # 4. Statistiques supplémentaires pour colonnes numériques
+# print("\n\n4. STATISTIQUES DÉTAILLÉES (colonnes numériques)")
+# print("-"*80)
+# numeric_cols = df_tous_pays.select_dtypes(include=[np.number]).columns
+# for col in numeric_cols:
+#     print(f"\n{col}:")
+#     print(f"  Moyenne : {df_tous_pays[col].mean():.4f}")
+#     print(f"  Médiane : {df_tous_pays[col].median():.4f}")
+#     print(f"  Écart-type : {df_tous_pays[col].std():.4f}")
+#     print(f"  Min : {df_tous_pays[col].min():.4f}")
+#     print(f"  Max : {df_tous_pays[col].max():.4f}")
+#     print(f"  Q1 (25%) : {df_tous_pays[col].quantile(0.25):.4f}")
+#     print(f"  Q3 (75%) : {df_tous_pays[col].quantile(0.75):.4f}")
+#     print(f"  Valeurs uniques : {df_tous_pays[col].nunique()}")
 
 
 
@@ -90,33 +88,35 @@ fig.suptitle('Total de médailles paralympiques par athlète en fonction de l\'I
 axes = axes.flatten()
 
 
-#TOTAL PARALYMPIQUE EN FONCTION DE L'IDH
+#TOTAL PARALYMPIQUE ET OLYMPIQUE EN FONCTION DE L'IDH
 # Créer un graphique pour chaque année
-for idx, annee in enumerate(annees):
-    ax = axes[idx]
-    
-    # Filtrer les données pour l'année
-    df_annee = df_filtree[df_filtree['annee'] == annee].copy()
-    
-    # Supprimer les valeurs manquantes
-    df_annee = df_annee.dropna(subset=['idh', 'total_medailles_paralympiquespar_athlete'])
-    
-    # Créer le scatter plot
-    ax.scatter(df_annee['idh'], 
-              df_annee['total_medailles_paralympiques_par_athlete'],
-              alpha=0.6, s=100, c='purple', edgecolors='black', linewidth=0.5)
-    
-    # Ajouter les labels
-    ax.set_xlabel('IDH', fontsize=11, fontweight='bold')
-    ax.set_ylabel('Médailles paralympiques par athlète', fontsize=11, fontweight='bold')
-    ax.set_title(f'Jeux Paralympiques {int(annee)}', fontsize=13, fontweight='bold')
-    ax.grid(True, alpha=0.3, linestyle='--')
-    
-    # Limites des axes
-    ax.set_xlim(0.4, 1.0)
+def graphique(a,b): #fais un nuage de b sur a
+    for idx, annee in enumerate(annees):
+        ax = axes[idx]
+        
+        # Filtrer les données pour l'année
+        df_annee = df_filtree[df_filtree['annee'] == annee].copy()
+        
+        # Supprimer les valeurs manquantes
+        df_annee = df_annee.dropna(subset=[a, b])
 
-plt.tight_layout()
-plt.show()
+        print(df_annee[a], df_annee[b])
+        # Créer le scatter plot
+        ax.scatter(df_annee[a], df_annee[b], alpha=0.6, s=10, c='purple', edgecolors='black', linewidth=0.5)
+        
+        # Ajouter les labels
+        ax.set_xlabel(f'{b}', fontsize=11, fontweight='bold')
+        ax.set_ylabel(f'{a}', fontsize=11, fontweight='bold')
+        ax.set_title(f'{int(annee)}', fontsize=13, fontweight='bold')
+        ax.grid(True, alpha=0.3, linestyle='--')
+        
+        # Limites des axes
+        ax.set_xlim(0.4, 1.0)
 
+    plt.tight_layout()
+    plt.show()
+
+
+graphique("total_medailles_olympique_par_athlete","total_medailles_paralympiques_par_athlete")
 
 # %%

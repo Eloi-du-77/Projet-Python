@@ -1,8 +1,9 @@
 from eurostat import get_data_df
 import pandas as pd
 
-df = get_data_df("gov_10a_exp")
-
+df = df = get_data_df("gov_10a_exp", flags=False, filter_pars={'unit': 'PC_GDP','sector': 'S13',  # Secteur des administrations publiques
+    'na_item': 'TE'   # Total des dépenses
+    })
 
 df_filtree=df[df['cofog99'].isin(['GF0602','GF0801','GF1001'])]
 

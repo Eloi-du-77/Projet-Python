@@ -10,7 +10,7 @@ df_athletes_paralympiques=pd.read_pickle("df_athletes_paralympiques.pkl")
 df_depenses_publiques=pd.read_pickle("df_depenses_publiques.pkl")
 df_idh=pd.read_pickle("df_idh.pkl")
 df_pib_par_habitant=pd.read_pickle("df_pib_par_habitant.pkl")
-
+df_education=pd.read_pickle("df_education.pkl")
 
 #tout réunir
 
@@ -34,6 +34,12 @@ df_merge = df_merge.merge(
 
 df_merge = df_merge.merge(
     df_depenses_publiques, 
+    on=['pays', 'annee'], 
+    how='outer'
+)
+
+df_merge = df_merge.merge(
+    df_education, 
     on=['pays', 'annee'], 
     how='outer'
 )
@@ -71,8 +77,22 @@ df_merge['total_medailles_paralympiques_par_athlete'] = df_merge['total_medaille
 df_merge['amenagement_territoire_par_habitant'] = df_merge['amenagement_territoire'] * df_merge['pib_habitant']
 df_merge['loisirs_sports_par_habitant'] = df_merge['loisirs_sports'] * df_merge['pib_habitant']
 df_merge['maladie_invalidite_par_habitant'] = df_merge['maladie_invalidite'] * df_merge['pib_habitant']
+df_merge['education_par_habitant'] = df_merge['education'] * df_merge['pib_habitant']
+
+#Ajout d'une variable de performance (3 points pour une medaille d'or, 2 pour une en argent, 1 pour une en bronze)
+df_merge['score_paralympique'] = (3 * df_merge['or_paralympique_par_athlete'] + 
+                                 2 * df_merge['argent_paralympique_par_athlete'] + 
+                                 df_merge['bronze_paralympique_par_athlete'])
+
+df_merge['score_olympique'] = (3 * df_merge['or_olympique_par_athlete'] + 
+                                 2 * df_merge['argent_olympique_par_athlete'] + 
+                                 df_merge['bronze_olympique_par_athlete'])
 
 
+#Suppression des colonnes des pays n'ayant jamais amené d'athlètes aux jeux olympiques (permet surtout d'enlever les groupes de pays présents dans certaines bases : Afrique du Nord, etc...)
+print(len(df_merge))
+df_merge = df_merge[df_merge.groupby('pays')['athletes_olympiques'].transform('sum') > 0]
+print(len(df_merge))
 df_merge.to_pickle("df_tous_pays.pkl")
 
 
@@ -85,13 +105,13 @@ pd.set_option('display.max_colwidth', None)
 
 
 
-# Afficher les résultats
-print(f"Nombre total de lignes: {len(df_merge)}")
-print(f"Nombre de colonnes: {len(df_merge.columns)}")
-print(f"\nAperçu du DataFrame fusionné:")
-print(df_merge.query('pays == "France" & annee == 2012'))
-print(f"\nNombre de valeurs manquantes par colonne:")
-print(df_merge.isnull().sum())
+# # Afficher les résultats
+# print(f"Nombre total de lignes: {len(df_merge)}")
+# print(f"Nombre de colonnes: {len(df_merge.columns)}")
+# print(f"\nAperçu du DataFrame fusionné:")
+# print(df_merge.query('pays == "France" & annee == 2012'))
+# print(f"\nNombre de valeurs manquantes par colonne:")
+# print(df_merge.isnull().sum())
 
 
 
@@ -109,45 +129,5 @@ print(df_merge.isnull().sum())
 
 
 
-
-
-#Creation d'une variable sur les dépenses moyennes en sport les 4 années avant les JO précédents
-
-annees_jo = [2012, 2016, 2020, 2024] #nous n'avons pas le nombre d'athlètes avant 2012 donc on ne travaillera pas dessus
-
-# def depense_jo(g):
-    
-#     liste_secteurs = ["Maladie / Invalidité", "Aménagement du territoire", "Loisirs et sports"]
-#     g['depense_jo'] = np.nan #pas de valeur si il n'y a pas de JO cette année
-#     for elt in liste_secteurs :
-#         for pays in g['pays']:
-#             for a in annees_jo:
-#                 annees_avant = []
-#                 for i in range(1,5):
-#                     val = g.loc[(g["pays"]==pays) & (g["type_depense"]==elt) & (g["annee"] == a-i), "depense"]
-#                     if not val.empty:
-#                         print(annees_avant,pays,elt,a)
-#                         annees_avant.append(val.values[0])
-#                 if annees_avant:
-#                     g.loc[(g["pays"]==pays) & (g["type_depense"]==elt) & (g["annee"] == a), 'depense_jo'] = sum(annees_avant)/len(annees_avant)
-#     return g
-
-
-#Creation d'une variable sur les dépenses moyenne en sport entre 1995 et l'année en question
-
-# print(df_depenses_publiques.dtypes)
-
-# def depense_jo_tous_temps(g):
-    
-#     liste_secteurs = ["Maladie / Invalidité", "Aménagement du territoire", "Loisirs et sports"]
-#     g['depense_jo'] = np.nan #pas de valeur si il n'y a pas de JO cette année
-#     for elt in liste_secteurs :
-#         for pays in g['pays']:
-#             for a in annees_jo:
-#                 annees_avant = [g.loc[(g["pays"]==pays) & (g["cofog99"]==elt) & (g["annee"] == i), "depense"] for i in range (1995,a)]
-#                 print(annees_avant)
-#                 if not annees_avant==[]:
-#                     g.loc[(g["pays"]==pays) & (g["cofog99"]==elt) & (g["annee"] == a), 'depense_jo'] = sum(annees_avant)/len(annees_avant)
-#     return g
 
 
