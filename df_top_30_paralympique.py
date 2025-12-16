@@ -26,7 +26,7 @@ top_30_pays = total_medailles_par_pays.nlargest(30, 'total_cumule')['pays'].toli
 
 # Filtrer le DataFrame original pour ne garder que les pays du top 30
 # (conserve TOUTES les années pour ces pays)
-df_tous_pays = df_tous_pays[df_tous_pays['pays'].isin(top_30_pays)].copy()
+df_top_30 = df_tous_pays[df_tous_pays['pays'].isin(top_30_pays)].copy()
 
 print(f"Nombre total de lignes : {len(df_tous_pays)}")
 print("\nTop 30 des pays (par médailles paralympiques cumulées 2012-2024) :")
@@ -34,20 +34,34 @@ for i, pays in enumerate(top_30_pays, 1):
     total = total_medailles_par_pays[total_medailles_par_pays['pays'] == pays]['total_cumule'].values[0]
     print(f"{i}. {pays}: {int(total)} médailles")
 
-df_tous_pays.to_pickle("df_top_30.pkl")
+df_top_30.to_pickle("df_top_30.pkl")
+
+#FILTRAGE AVEC QUE LE TOP 10
+
+top_10_pays = total_medailles_par_pays.nlargest(10, 'total_cumule')['pays'].tolist()
+
+
+# Filtrer le DataFrame original pour ne garder que les pays du top 10
+# (conserve TOUTES les années pour ces pays)
+df_top_10 = df_tous_pays[df_tous_pays['pays'].isin(top_10_pays)].copy()
+
+print(f"Nombre total de lignes : {len(df_tous_pays)}")
+print("\nTop 10 des pays (par médailles paralympiques cumulées 2012-2024) :")
+for i, pays in enumerate(top_10_pays, 1):
+    total = total_medailles_par_pays[total_medailles_par_pays['pays'] == pays]['total_cumule'].values[0]
+    print(f"{i}. {pays}: {int(total)} médailles")
+
+df_top_10.to_pickle("df_top_10.pkl")
 
 
 
+# # 1. Statistiques de base
+# print("\n1. STATISTIQUES DE BASE (colonnes numériques)")
+# print("-"*80)
+# print(df_tous_pays.describe())
 
-
-
-# 1. Statistiques de base
-print("\n1. STATISTIQUES DE BASE (colonnes numériques)")
-print("-"*80)
-print(df_tous_pays.describe())
-
-# 2. Informations générales sur le DataFrame
-print("\n\n2. INFORMATIONS GÉNÉRALES")
-print("-"*80)
-print(f"Nombre de lignes : {len(df_tous_pays)}")
-print(f"Nombre de colonnes : {len(df_tous_pays.columns)}")
+# # 2. Informations générales sur le DataFrame
+# print("\n\n2. INFORMATIONS GÉNÉRALES")
+# print("-"*80)
+# print(f"Nombre de lignes : {len(df_tous_pays)}")
+# print(f"Nombre de colonnes : {len(df_tous_pays.columns)}")

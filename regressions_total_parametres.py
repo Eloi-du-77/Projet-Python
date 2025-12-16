@@ -3,10 +3,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+pd.set_option('display.max_rows', None)
+# pd.set_option('display.width', None)
+# pd.set_option('display.max_colwidth', None)
+
 
 df_tous_pays=pd.read_pickle("df_tous_pays.pkl")
 df_top_30=pd.read_pickle("df_top_30.pkl")
-
+df_top_10=pd.read_pickle("df_top_10.pkl")
+df_top_12=pd.read_pickle("df_top12_sans_NaN.pkl")
 #FONCTION DONNANT LE NUAGE ENTRE DEUX PARAMETRES ET LE NOMBRE D'OBSERVATION DES NUAGES
 
 def graphique(a, b, df):
@@ -31,7 +36,7 @@ def graphique(a, b, df):
         # Supprimer les valeurs manquantes
         df_annee = df_annee.dropna(subset=[a, b])
         
-        print(f"Année {annee}: {len(df_annee)} observations")
+        #print(f"Année {annee}: {len(df_annee)} observations")
         
         # Créer le scatter plot
         ax.scatter(df_annee[b], df_annee[a], alpha=0.6, s=50, c='purple', 
@@ -49,7 +54,11 @@ def graphique(a, b, df):
 # Appeler la fonction
 graphique("education_par_habitant", 
           "total_medailles_paralympiques_par_athlete",
-          df_top_30)
+          df_top_12)
 
-graphique("education_par_habitant","total_medailles_paralympiques_par_athlete",df_tous_pays)
+graphique("maladie_invalidite_par_habitant","total_medailles_paralympiques_par_athlete",df_top_12)
+
+graphique("total_medailles_olympique_par_athlete","total_medailles_paralympiques_par_athlete",df_top_12)
+
+
 # %%

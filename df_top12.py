@@ -31,4 +31,4 @@ df_top12 = df_filtre[df_filtre['pays'].isin(top_12_pays)]
 print(f"Top 12 pays : {list(top_12_pays)}")
 print(f"Nombre de lignes : {len(df_top12)}")
 
-df_top12.to_pickle("df_top_12_sans_NaN")
+df_top12.to_pickle("df_top_12_sans_NaN.pkl")

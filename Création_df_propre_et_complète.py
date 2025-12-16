@@ -88,14 +88,45 @@ df_merge['score_olympique'] = (3 * df_merge['or_olympique_par_athlete'] +
                                  2 * df_merge['argent_olympique_par_athlete'] + 
                                  df_merge['bronze_olympique_par_athlete'])
 
-#Création d'une variable de moyenne de dépense entre 1995 et l'année
-
-annees_olympiques = [2012,2016,2020,2024]
+#Ajout de variables donnant la moyenne des dépenses sur les 4 dernières années
 # Initialiser les nouvelles colonnes avec NaN
-df_merge['moy_education_depuis_1995'] = np.nan
-df_merge['moy_loisirs_depuis_1995'] = np.nan
-df_merge['moy_amenagement_depuis_1995'] = np.nan
-df_merge['moy_maladie_depuis_1995'] = np.nan
+df_merge['moy_education_pre_jo'] = np.nan
+df_merge['moy_loisirs_pre_jo'] = np.nan
+df_merge['moy_amenagement_pre_jo'] = np.nan
+df_merge['moy_maladie_pre_jo'] = np.nan
+
+# Pour chaque année olympique
+annees_olympiques = [2012,2016,2020,2024]
+for annee_jo in annees_olympiques:
+    # Définir les 4 années précédentes
+    annees_precedentes = [annee_jo - 4, annee_jo - 3, annee_jo - 2, annee_jo - 1]
+    
+    # Pour chaque pays
+    for pays in df_merge['pays'].unique():
+        # Filtrer les données du pays pour les 4 années précédentes
+        mask_pays_annees = (df_merge['pays'] == pays) & (df_merge['annee'].isin(annees_precedentes))
+        donnees_precedentes = df_merge[mask_pays_annees]
+        
+        # Calculer les moyennes si on a des données
+        if len(donnees_precedentes) > 0:
+            moy_education = donnees_precedentes['education_par_habitant'].mean()
+            moy_loisirs = donnees_precedentes['loisirs_sports_par_habitant'].mean()
+            moy_amenagement = donnees_precedentes['amenagement_territoire_par_habitant'].mean()
+            moy_maladie = donnees_precedentes['maladie_invalidite_par_habitant'].mean()
+            
+            # Assigner ces moyennes à la ligne de l'année olympique
+            mask_jo = (df_merge['pays'] == pays) & (df_merge['annee'] == annee_jo)
+            df_merge.loc[mask_jo, 'moy_education_pre_jo'] = moy_education
+            df_merge.loc[mask_jo, 'moy_loisirs_pre_jo'] = moy_loisirs
+            df_merge.loc[mask_jo, 'moy_amenagement_pre_jo'] = moy_amenagement
+            df_merge.loc[mask_jo, 'moy_maladie_pre_jo'] = moy_maladie
+
+#Création d'une variable de moyenne de dépenses depuis 1995
+
+df_merge['moy_education_1995'] = np.nan
+df_merge['moy_loisirs_1995'] = np.nan
+df_merge['moy_amenagement_1995'] = np.nan
+df_merge['moy_maladie_1995'] = np.nan
 
 # Pour chaque année olympique
 for annee_jo in annees_olympiques:
@@ -114,50 +145,25 @@ for annee_jo in annees_olympiques:
             
             # Assigner ces moyennes à la ligne de l'année olympique
             mask_jo = (df_merge['pays'] == pays) & (df_merge['annee'] == annee_jo)
-            df_merge.loc[mask_jo, 'moy_education_depuis_1995'] = moy_education
-            df_merge.loc[mask_jo, 'moy_loisirs_depuis_1995'] = moy_loisirs
-            df_merge.loc[mask_jo, 'moy_amenagement_depuis_1995'] = moy_amenagement
-            df_merge.loc[mask_jo, 'moy_maladie_depuis_1995'] = moy_maladie
 
-#Création d'une variable score olympique et paralympique moyen
-
-# Initialiser les nouvelles colonnes avec NaN
-df_merge['score_olympique_moyen'] = np.nan
-df_merge['score_paralympique_moyen'] = np.nan
-
-# Pour chaque année olympique
-for i, annee_jo in enumerate(annees_olympiques):
-    # Définir les années olympiques à inclure (toutes celles jusqu'à l'année actuelle incluse)
-    annees_jo_incluses = annees_olympiques[:i+1]
-    
-    # Pour chaque pays
-    for pays in df_merge['pays'].unique():
-        # Filtrer les données du pays pour les années olympiques précédentes (incluse)
-        mask_pays_jo = (df_merge['pays'] == pays) & (df_merge['annee'].isin(annees_jo_incluses))
-        donnees_jo = df_merge[mask_pays_jo]
-        
-        # Calculer les moyennes si on a des données
-        if len(donnees_jo) > 0:
-            moy_olympique = donnees_jo['score_olympique'].mean()
-            moy_paralympique = donnees_jo['score_paralympique'].mean()
-            
-            # Assigner ces moyennes à la ligne de l'année olympique
-            mask_jo = (df_merge['pays'] == pays) & (df_merge['annee'] == annee_jo)
-            df_merge.loc[mask_jo, 'score_olympique_moyen'] = moy_olympique
-            df_merge.loc[mask_jo, 'score_paralympique_moyen'] = moy_paralympique
-
+            df_merge.loc[mask_jo, 'moy_education_1995'] = moy_education
+            df_merge.loc[mask_jo, 'moy_loisirs_1995'] = moy_loisirs
+            df_merge.loc[mask_jo, 'moy_amenagement_1995'] = moy_amenagement
+            df_merge.loc[mask_jo, 'moy_maladie_1995'] = moy_maladie
 
 #Suppression des colonnes des pays n'ayant jamais amené d'athlètes aux jeux olympiques (permet surtout d'enlever les groupes de pays présents dans certaines bases : Afrique du Nord, etc...)
-print(len(df_merge))
+
 df_merge = df_merge[df_merge.groupby('pays')['athletes_olympiques'].transform('sum') > 0]
-print(len(df_merge))
+
+#Suppression des années sans JO
+
 df_merge.to_pickle("df_tous_pays.pkl")
 
 
 
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
+# pd.set_option('display.max_columns', None)
+# pd.set_option('display.width', None)
+# pd.set_option('display.max_colwidth', None)
 
 
 
@@ -167,7 +173,7 @@ pd.set_option('display.max_colwidth', None)
 # print(f"Nombre total de lignes: {len(df_merge)}")
 # print(f"Nombre de colonnes: {len(df_merge.columns)}")
 # print(f"\nAperçu du DataFrame fusionné:")
-# print(df_merge.query('pays == "France" & annee == 2012'))
+print(df_merge.query('pays == "France"'))
 # print(f"\nNombre de valeurs manquantes par colonne:")
 # print(df_merge.isnull().sum())
 

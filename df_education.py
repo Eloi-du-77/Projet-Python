@@ -286,6 +286,11 @@ country_mapping = {
     'Zimbabwe': 'Zimbabwe',
 }
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', None)
+
+
 df_clean['pays'] = df_clean['pays'].replace(country_mapping)
 
 regions_a_exclure = [
@@ -299,5 +304,9 @@ regions_a_exclure = [
 # Exclure les régions
 df_clean = df_clean[~df_clean['pays'].isin(regions_a_exclure)]
 
+# pays_uniques = df_clean['pays'].unique()
+# print(pays_uniques)
+
+print(df_clean[df_clean["pays"]=="Chine"])
 
 df_clean.to_pickle("df_education.pkl")
