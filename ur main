@@ -1,0 +1,26 @@
+[33m3195854[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: rebase (start): checkout origin/main
+[33mbad6966[m[33m ([m[1;32mbranche-de-eloi[m[33m)[m HEAD@{1}: commit: ébauche d'ACP, création d'une table avec les 12 meilleurs pays sans NaN
+[33mf0a39d8[m[33m ([m[1;31morigin/branche-de-eloi[m[33m, [m[1;32mmain[m[33m)[m HEAD@{2}: checkout: moving from branche-de-eloi to branche-de-eloi
+[33mf0a39d8[m[33m ([m[1;31morigin/branche-de-eloi[m[33m, [m[1;32mmain[m[33m)[m HEAD@{3}: pull origin main: updating HEAD
+[33mf0a39d8[m[33m ([m[1;31morigin/branche-de-eloi[m[33m, [m[1;32mmain[m[33m)[m HEAD@{4}: checkout: moving from branche-de-eloi to branche-de-eloi
+[33mf0a39d8[m[33m ([m[1;31morigin/branche-de-eloi[m[33m, [m[1;32mmain[m[33m)[m HEAD@{5}: merge origin/main: updating HEAD
+[33mf0a39d8[m[33m ([m[1;31morigin/branche-de-eloi[m[33m, [m[1;32mmain[m[33m)[m HEAD@{6}: pull origin main: updating HEAD
+[33mf0a39d8[m[33m ([m[1;31morigin/branche-de-eloi[m[33m, [m[1;32mmain[m[33m)[m HEAD@{7}: checkout: moving from main to branche-de-eloi
+[33mf0a39d8[m[33m ([m[1;31morigin/branche-de-eloi[m[33m, [m[1;32mmain[m[33m)[m HEAD@{8}: commit: Réalisation de nuages de points entre les variables, création d'une df avec que le top 30, suppression de la df principale les pays n'ayant jamais participe, ajout du budget educatif
+[33m76a5fd6[m HEAD@{9}: commit: troncage de la base
+[33m5c72820[m HEAD@{10}: pull origin main: Merge made by the 'ort' strategy.
+[33mb57e522[m HEAD@{11}: commit: Rien du tout
+[33m1d2edc8[m HEAD@{12}: rebase (finish): returning to refs/heads/main
+[33m1d2edc8[m HEAD@{13}: rebase (continue): collecte des données, merge de toutes les df, traitement des données (traduction, calcul de médaille par athlètes, de dépense par habitant)
+[33m3203b0f[m HEAD@{14}: pull origin main --rebase (start): checkout 3203b0f72ccd0ff8c7f746e39541d9acff3d4cb4
+[33mb1992d6[m HEAD@{15}: commit: collecte des données, merge de toutes les df, traitement des données (traduction, calcul de médaille par athlètes, de dépense par habitant)
+[33mbd18f49[m HEAD@{16}: pull origin main --rebase (finish): returning to refs/heads/main
+[33mbd18f49[m HEAD@{17}: pull origin main --rebase (pick): Sauvegarde avant pull
+[33mcb95b1e[m HEAD@{18}: pull origin main --rebase (start): checkout cb95b1e31512ef7533ea08d32078a6d6ec71dfe4
+[33m4e658ad[m HEAD@{19}: commit: Sauvegarde avant pull
+[33m4a8f5b8[m HEAD@{20}: pull origin main --rebase: Fast-forward
+[33me9726b2[m HEAD@{21}: pull origin main --rebase (finish): returning to refs/heads/main
+[33me9726b2[m HEAD@{22}: pull origin main --rebase (pick): Sauvegarde avant pull
+[33mc65f4a9[m HEAD@{23}: pull origin main --rebase (start): checkout c65f4a95e9bc02a1cdbd14768e81aa2d50c1404c
+[33m7d04d29[m HEAD@{24}: commit: Sauvegarde avant pull
+[33ma4bb64c[m HEAD@{25}: commit (initial): Ton message de commit

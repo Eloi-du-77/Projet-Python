@@ -286,6 +286,8 @@ country_mapping = {
     'Zimbabwe': 'Zimbabwe',
 }
 
+
+
 df_clean['pays'] = df_clean['pays'].replace(country_mapping)
 
 regions_a_exclure = [
