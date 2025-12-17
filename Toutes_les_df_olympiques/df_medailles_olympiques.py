@@ -1,9 +1,6 @@
 import pandas as pd
 import requests
 from io import StringIO
-from googletrans import Translator
-
-translator = Translator()
 
 def get_medal_table(year, url):
 

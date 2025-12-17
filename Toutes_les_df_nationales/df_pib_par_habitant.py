@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Charger le fichier Excel (skip les 3 premières lignes qui sont généralement des métadonnées)
-df = pd.read_excel('Projet-Python/PIB_par_habitant_par_pays_par_annee.xls', skiprows=3)
+df = pd.read_excel('PIB_par_habitant_par_pays_par_annee.xls', skiprows=3)
 
 # Afficher les premières colonnes pour voir la structure
 # Les colonnes non-annees sont généralement: 

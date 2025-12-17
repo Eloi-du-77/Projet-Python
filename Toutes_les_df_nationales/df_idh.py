@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Charger le fichier CSV
-df = pd.read_csv('Projet-Python/IDH_par_pays_par_annee.csv', encoding='cp1252')
+df = pd.read_csv('IDH_par_pays_par_annee.csv', encoding='cp1252')
 
 # Sélectionner uniquement les colonnes nécessaires
 # Colonnes d'identification

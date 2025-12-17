@@ -3,7 +3,7 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df_top_12=pd.read_pickle("df_top12_sans_NaN.pkl")
+df_top_12=pd.read_pickle("Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
 print(df_top_12.columns)
 
 # 1. Sélectionner les variables explicatives (sans les variables à expliquer)
@@ -21,7 +21,8 @@ variables_a_exclure = [
     'amenagement_territoire_par_habitant', 'moy_amenagement_pre_jo',
     'moy_loisirs_pre_jo', 'moy_education_pre_jo', 'moy_maladie_pre_jo',
     'education', 'maladie_invalidite', 'loisirs_sports', 'amenagement_territoire',# variables non retenues
-    'athletes_olympiques', "athletes_paralympiques" #variables sportives
+    #'athletes_olympiques', "athletes_paralympiques",
+    'score_olympique_moyen', 'score_paralympique_moyen', #variables sportives
 ]
 
 # Variables explicatives : nb athlètes, dépenses sociales, IDH, PIB, etc.
@@ -115,14 +116,14 @@ loadings = pd.DataFrame(
 print("\n" + "="*60)
 print("INTERPRÉTATION DES COMPOSANTES PRINCIPALES")
 print("="*60)
-print("\nTop 10 variables contribuant à PC1 :")
-top_pc1 = loadings['PC1'].abs().sort_values(ascending=False).head(10)
+print("\nTop 3 variables contribuant à PC1 :")
+top_pc1 = loadings['PC1'].abs().sort_values(ascending=False).head(6)
 for var, val in top_pc1.items():
     signe = "+" if loadings.loc[var, 'PC1'] > 0 else "-"
     print(f"  {signe} {var}: {abs(loadings.loc[var, 'PC1']):.3f}")
 
-print("\nTop 10 variables contribuant à PC2 :")
-top_pc2 = loadings['PC2'].abs().sort_values(ascending=False).head(10)
+print("\nTop 3 variables contribuant à PC2 :")
+top_pc2 = loadings['PC2'].abs().sort_values(ascending=False).head(6)
 for var, val in top_pc2.items():
     signe = "+" if loadings.loc[var, 'PC2'] > 0 else "-"
     print(f"  {signe} {var}: {abs(loadings.loc[var, 'PC2']):.3f}")

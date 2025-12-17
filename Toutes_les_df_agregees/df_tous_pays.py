@@ -3,14 +3,14 @@ import numpy as np
 
 #Import des df
 
-df_medailles_olympiques=pd.read_pickle("df_medailles_olympiques.pkl")
-df_medailles_paralympiques=pd.read_pickle("df_medailles_paralympiques.pkl")
-df_athletes_olympiques=pd.read_pickle("df_athletes_olympiques.pkl")
-df_athletes_paralympiques=pd.read_pickle("df_athletes_paralympiques.pkl")
-df_depenses_publiques=pd.read_pickle("df_depenses_publiques.pkl")
-df_idh=pd.read_pickle("df_idh.pkl")
-df_pib_par_habitant=pd.read_pickle("df_pib_par_habitant.pkl")
-df_education=pd.read_pickle("df_education.pkl")
+df_medailles_olympiques=pd.read_pickle("../Toutes_les_df_olympiques/df_medailles_olympiques.pkl")
+df_medailles_paralympiques=pd.read_pickle("../Toutes_les_df_olympiques/df_medailles_paralympiques.pkl")
+df_athletes_olympiques=pd.read_pickle("../Toutes_les_df_olympiques/df_athletes_olympiques.pkl")
+df_athletes_paralympiques=pd.read_pickle("../Toutes_les_df_olympiques/df_athletes_paralympiques.pkl")
+df_depenses_publiques=pd.read_pickle("../Toutes_les_df_de_depenses/df_depenses_publiques.pkl")
+df_idh=pd.read_pickle("../Toutes_les_df_nationales/df_idh.pkl")
+df_pib_par_habitant=pd.read_pickle("../Toutes_les_df_nationales/df_pib_par_habitant.pkl")
+df_education=pd.read_pickle("../Toutes_les_df_de_depenses/df_education.pkl")
 
 #tout réunir
 
