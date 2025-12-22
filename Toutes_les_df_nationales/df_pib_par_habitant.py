@@ -1,17 +1,12 @@
 import pandas as pd
 
-# Charger le fichier Excel (skip les 3 premières lignes qui sont généralement des métadonnées)
+#Lecture du fichier
 df = pd.read_excel('PIB_par_habitant_par_pays_par_annee.xls', skiprows=3)
 
-# Afficher les premières colonnes pour voir la structure
-# Les colonnes non-annees sont généralement: 
-# 'Country Name', 'Country Code', 'Indicator Name', 'Indicator Code'
-# Les annees sont les colonnes restantes
-
-# Identifier les colonnes d'identifiants (non-annees)
+#Colonnes qui identifient le pays
 id_cols = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
 
-# Transformer en format long
+#Transformer en format long
 df_long = pd.melt(
     df,
     id_vars=id_cols,
@@ -19,25 +14,23 @@ df_long = pd.melt(
     value_name='pib_habitant'
 )
 
-# Convertir annee en numérique (enlève 'Unnamed' et autres)
+#Convertit l'annee en numérique
 df_long['annee'] = pd.to_numeric(df_long['annee'], errors='coerce')
 
-# Supprimer les lignes où annee est NaN
+#Supprime les lignes où annee est un NaN
 df_long = df_long.dropna(subset=['annee'])
 
-# Convertir annee en entier
+#Convertit annee en entier
 df_long['annee'] = df_long['annee'].astype(int)
 
-# Filtrer pour annee >= 2008
+#Ne conserver que les annees après 2008
 df_long = df_long[df_long['annee'] >= 2008].reset_index(drop=True)
 
-# Supprimer les lignes avec PIB manquant si nécessaire
+#Supprimer les lignes avec PIB manquant si nécessaire, supprimer des colonnes inutiles
 df_long = df_long.dropna(subset=['pib_habitant'])
-
-
 df_long = df_long.drop(['Indicator Name', 'Indicator Code'], axis=1)
 
-#Changer les noms de certains pays
+#Adaptation du nom de certains pays
 country_mapping = {
     "Brunéi Darussalam": "Brunei",
     "Congo, Rép. dém. du": "République démocratique du Congo",
@@ -67,9 +60,8 @@ country_mapping = {
     "Saint-Vincent-et-les Grenadines" :"Saint-Vincent-et-les-Grenadines",
 }
 
+#Adaptation du nom des pays et des variables
 df_long['Country Name'] = df_long['Country Name'].replace(country_mapping)
-
-
 df_long.columns = ["pays", "code_du_pays", "annee", "pib_habitant"]
 
 df_long.to_pickle("df_pib_par_habitant.pkl")

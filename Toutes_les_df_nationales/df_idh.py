@@ -1,41 +1,36 @@
 import pandas as pd
 
-# Charger le fichier CSV
+#Lecture du fichier
 df = pd.read_csv('IDH_par_pays_par_annee.csv', encoding='cp1252')
 
-# Sélectionner uniquement les colonnes nécessaires
+#Sélection des colonnes intéressantes
 # Colonnes d'identification
-id_cols = ['country']
-
+pays = ['country']
 # Colonnes HDI de 2008 à 2023 (2024 n'existe pas encore dans les données)
-hdi_cols = [f'hdi_{year}' for year in range(2008, 2024)]
+idh = [f'hdi_{year}' for year in range(2008, 2024)]
 
-# Vérifier quelles colonnes existent réellement
-available_hdi_cols = [col for col in hdi_cols if col in df.columns]
+#Creer un df sans les colonnes pas intéressantes
+df_interessant = df[pays + idh].copy()
 
-# Créer un DataFrame avec uniquement les colonnes nécessaires
-df_selected = df[id_cols + available_hdi_cols].copy()
-
-# Transformer en format long
+#Transformer en format long
 df_long = pd.melt(
-    df_selected,
+    df_interessant,
     id_vars=['country'],
     var_name='annee',
     value_name='idh'
 )
 
-# Extraire l'annee du nom de colonne (hdi_2008 -> 2008)
+#Créer une colonne année à partir du nom des colonnes (transformer hdi_year en une colonne hdi avec une valeur pour chaque couple country / year)
 df_long['annee'] = df_long['annee'].str.replace('hdi_', '').astype(int)
 
-# Supprimer les lignes avec IDH manquant
+#Supprimer les lignes sans idh
 df_long = df_long.dropna(subset=['idh'])
 
-# Trier par pays et annee
+#Trier par pays et annee (confort visuel)
 df_long = df_long.sort_values(['annee', 'annee']).reset_index(drop=True)
 
 
 #Traduire les noms de pays
-
 countries_en_fr = {
     # --- Nations & territoires ---
     "Afghanistan": "Afghanistan",
@@ -254,12 +249,13 @@ countries_en_fr = {
     "Somalia": "Somalie"
 }
 
+#Traduction + Suppression des caractères ajoutés après la conversion
 df_long["country"] = (
     df_long["country"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
 )
-
 df_long["country"] = df_long["country"].map(countries_en_fr)
 
+#Renommer la colonne country en pays
 df_long.rename(columns={'country': 'pays'}, inplace=True)
 
 df_long.to_pickle("df_idh.pkl")
