@@ -11,7 +11,7 @@ df_tous_pays=pd.read_pickle("df_tous_pays.pkl")
 
 # FILTRAGE AVEC QUE LE TOP 30 DES JEUX PARALYMPIQUES
 
-# Filtrer les données entre 2012 et 2024
+# Filtrage des données entre 2012 et 2024
 df_periode = df_tous_pays[(df_tous_pays['annee'] >= 2012) & (df_tous_pays['annee'] <= 2024)].copy()
 print(f"Nombre de lignes dans df_periode: {len(df_periode)}")
 print()

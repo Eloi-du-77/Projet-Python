@@ -2,13 +2,15 @@ import pandas as pd
 import requests
 from io import StringIO
 
+#Parsing de Wikipédia pour les médailles paralympiques
 def get_paralympic_medal_table(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
     html = requests.get(url, headers=headers).text
     tables = pd.read_html(StringIO(html))
 
-    # sélectionner le tableau officiel : contient Gold/Silver/Bronze et ≥ 10 pays
+    #sélection du tableau des médailles
+    #il doit contenir Gold/Silver/Bronze et plus de 10 pays (pour ne pas prendre le mauvais tableau)
     good = None
     for t in tables:
         cols = [c.lower() for c in t.columns.astype(str)]
@@ -21,28 +23,28 @@ def get_paralympic_medal_table(year, url):
 
     df = good
 
-    # renommage robuste
+    #renommage des colonnes
     rename = {}
     for col in df.columns:
         lc = str(col).lower()
         if "nation" in lc or "npc" in lc or "team" in lc or "country" in lc:
-             rename[col] = "Country"
+             rename[col] = "pays"
         elif "gold" in lc:
-            rename[col] = "Gold"
+            rename[col] = "or_paralympique"
         elif "silver" in lc:
-            rename[col] = "Silver"
+            rename[col] = "argent_paralympique"
         elif "bronze" in lc:
-            rename[col] = "Bronze"
+            rename[col] = "bronze_paralympique"
         elif "total" in lc:
-            rename[col] = "Total"
+            rename[col] = "total_medailles_paralympiques"
 
     df = df.rename(columns=rename)
-    df = df[["Country", "Gold", "Silver", "Bronze", "Total"]]
-    df["Year"] = year
+    df = df[["pays", "or_paralympique", "argent_paralympique", "bronze_paralympique", "total_medailles_paralympiques"]]
+    df["annee"] = year
     return df
 
 
-# URLs officielles tableau de médailles des Jeux Paralympiques d'été
+#url du tableau des médailles paralympique
 para_urls = {
     2012: "https://en.wikipedia.org/wiki/2012_Summer_Paralympics_medal_table",
     2016: "https://en.wikipedia.org/wiki/2016_Summer_Paralympics_medal_table",
@@ -340,13 +342,11 @@ countries_en_fr_cio = {
     "Sri LankaSRI": "Sri Lanka"
 }
 
-df_para["Country"] = (
-    df_para["Country"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
+df_para["pays"] = (
+    df_para["pays"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
 )
 
-df_para["Country"] = df_para["Country"].map(countries_en_fr_cio)
+df_para["pays"] = df_para["pays"].map(countries_en_fr_cio)
 
-df_para.columns = ["pays", "or_paralympique", "argent_paralympique","bronze_paralympique", "total_medailles_paralympiques", "annee"]
-
-
+print(df_para)
 df_para.to_pickle("df_medailles_paralympiques.pkl")

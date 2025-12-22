@@ -2,6 +2,11 @@ import pandas as pd
 import requests
 from io import StringIO
 
+#pd.set_option('display.max_columns', None)
+#pd.set_option('display.width', None)
+#pd.set_option('display.max_colwidth', None)
+
+#Parsing des données de Wikipédia pour les médailles olympiques
 def get_medal_table(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -9,7 +14,9 @@ def get_medal_table(year, url):
 
     tables = pd.read_html(StringIO(html))
 
-    # sélectionner le tableau de médailles : contient gold/silver/bronze ET suffisamment de lignes (de sorte à ce qu'il ne prenne pas l'infobox)
+    #Sélection du tableau de médailles
+    #Il doit contenir les colonnes gold/silver/bronze
+    #ET suffisamment de lignes (de sorte à ce qu'il ne prenne pas l'infobox)
     good = None
     for t in tables:
         cols = [c.lower() for c in t.columns.astype(str)]
@@ -22,24 +29,24 @@ def get_medal_table(year, url):
 
     df = good
 
-    # renommage robuste
+    #renommage des colonnes
     rename = {}
     for col in df.columns:
         lc = str(col).lower()
         if "nation" in lc or "noc" in lc or "team" in lc or "country" in lc:
-            rename[col] = "Country"
+            rename[col] = "pays"
         elif "gold" in lc:
-            rename[col] = "Gold"
+            rename[col] = "or_olympique"
         elif "silver" in lc:
-            rename[col] = "Silver"
+            rename[col] = "argent_olympique"
         elif "bronze" in lc:
-            rename[col] = "Bronze"
+            rename[col] = "bronze_olympique"
         elif "total" in lc:
-            rename[col] = "Total"
+            rename[col] = "total_medailles_olympiques"
 
     df = df.rename(columns=rename)
-    df = df[["Country", "Gold", "Silver", "Bronze", "Total"]]
-    df["Year"] = year
+    df = df[["pays", "or_olympique", "argent_olympique", "bronze_olympique", "total_medailles_olympiques"]]
+    df["annee"] = year
     return df
 
 
@@ -50,9 +57,10 @@ urls = {
     2024: "https://en.wikipedia.org/wiki/2024_Summer_Olympics_medal_table",
 }
 
-df_all = pd.concat([get_medal_table(y, u) for y, u in urls.items()],
+df_medailles = pd.concat([get_medal_table(y, u) for y, u in urls.items()],
                    ignore_index=True)
 
+#Traduction de la base (aide de Claude AI pour faire le dictionnaire)
 countries_en_fr_cio = {
     # --- Nations & territoires CIO ---
     "Afghanistan": "Afghanistan",
@@ -257,13 +265,10 @@ countries_en_fr_cio = {
     "Olympic Athletes from Russia": "Russie",
     "ROC": "Russie"
 }
-
-df_all["Country"] = (
-    df_all["Country"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
+#Traduction + Suppression de défauts de conversion (les A tilde à la fin de certains pays par exemple)
+df_medailles["pays"] = (
+    df_medailles["pays"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
 )
-df_all["Country"] = df_all["Country"].map(countries_en_fr_cio)
+df_medailles["pays"] = df_medailles["pays"].map(countries_en_fr_cio)
 
-
-df_all.columns = ["pays", "or_olympique", "argent_olympique","bronze_olympique", "total_medailles_olympiques", "annee"]
-
-df_all.to_pickle("df_medailles_olympiques.pkl")
+df_medailles.to_pickle("df_medailles_olympiques.pkl")
