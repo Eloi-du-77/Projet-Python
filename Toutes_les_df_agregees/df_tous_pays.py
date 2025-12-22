@@ -62,10 +62,10 @@ df_merge = df_merge.merge(
     how='outer'
 )
 
-#Mettre le nombre d'athlètes en format float
+#Mettre le nombre d'athlètes et les annees en format numérique
 df_merge['athletes_olympiques'] = pd.to_numeric(df_merge['athletes_olympiques'], errors='coerce')
 df_merge['athletes_paralympiques'] = pd.to_numeric(df_merge['athletes_paralympiques'], errors='coerce')
-
+df_merge["annee"] = pd.to_numeric(df_merge["annee"], errors='coerce')
 #AJOUTS DE VARIABLES
 
 # Médailles olympiques par athlète
@@ -128,6 +128,8 @@ for annee_jo in annees_olympiques:
 df_merge = df_merge[df_merge.groupby('pays')['athletes_olympiques'].transform('sum') > 0]
 df_merge.to_pickle("df_tous_pays.pkl")
 
+print(df_merge[(df_merge['pays'] == 'Russie') & 
+                   (df_merge['annee'].isin([2012, 2016, 2020, 2024]))]['athletes_paralympiques'])
 
 
 

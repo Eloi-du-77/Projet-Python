@@ -3,6 +3,7 @@ import requests
 from io import StringIO
 import re
 
+#Parsing du tableau du nombre d'athletes depuis Wikipédia pour les Jeux 2O12, 2016 et 2020
 def get_number_athletes(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -10,7 +11,7 @@ def get_number_athletes(year, url):
     html = re.sub(r'(colspan|rowspan)="(\d+);"', r'\1="\2"', html)
 
     tables = pd.read_html(StringIO(html))
-    # sélectionner le tableau avec tous les pays de sorte à ce qu'il ne prenne pas l'infobox
+    #Sélection du tableau le plus grand de la page de sorte qu'il ne prenne pas l'infobox
     good = None
     for t in tables:
         if len(t) >= 100:
@@ -22,20 +23,21 @@ def get_number_athletes(year, url):
 
     df = good
 
-    # renommage robuste
+    #Renommer les colonnes en français
     rename = {}
     for col in df.columns:
         lc = str(col).lower()
         if "npc" in lc or "noc" in lc or "team" in lc or "0" in lc or "country" in lc :  #en 2020, les colonnes sont appelées 0 et 1
-            rename[col] = "Country"
+            rename[col] = "pays"
         if "athletes" in lc or "1" in lc:
-            rename[col] = "Athletes"
+            rename[col] = "athletes_paralympiques"
 
     df = df.rename(columns=rename)
-    df = df[["Country", "Athletes"]]
-    df["Year"] = year
+    df = df[["pays", "athletes_paralympiques"]]
+    df["annee"] = year
     return df
 
+#La mise en page pour les Jeux de 2024 est un peu différente donc la fonction aussi 
 def get_number_athletes_2024(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -43,11 +45,11 @@ def get_number_athletes_2024(year, url):
     html = re.sub(r'(colspan|rowspan)="(\d+);"', r'\1="\2"', html)
 
     tables = pd.read_html(StringIO(html))
-    # sélectionner le tableau de médailles : contient gold/silver/bronze ET suffisamment de lignes (de sorte à ce qu'il ne prenne pas l'infobox)
+    #sélection du tableau de sorte à ce qu'il ne prenne pas l'infobox
     good = None
     for t in tables:
         print(t, t.columns)
-        if len(t) == 1 and t.columns[0] != "Venue":
+        if len(t) == 1 and t.columns[0] != "Venue": #sinon, Python prend le tableau des équipements sportifs
             good = t.copy()
 
     if good is None:
@@ -64,12 +66,11 @@ urls1 = {
     
 urls2 = {2024: "https://en.wikipedia.org/wiki/2024_Summer_Paralympics",} #la page wikipedia 2024 a une mise en page différente
 
-df_all = pd.concat([get_number_athletes(y, u) for y, u in urls1.items()]+[get_number_athletes(y, u) for y, u in urls2.items()],
+df_para = pd.concat([get_number_athletes(y, u) for y, u in urls1.items()]+[get_number_athletes(y, u) for y, u in urls2.items()],
                    ignore_index=True)
 
 
 #Traduire les noms de pays
-
 countries_en_fr_cio = {
     # --- Nations & territoires CIO ---
     "Afghanistan": "Afghanistan",
@@ -310,12 +311,14 @@ countries_en_fr_cio = {
     "Faroe Islands": "Îles Féroé",
 }
 
-df_all["Country"] = (
-    df_all["Country"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
+#Traduction + Suppression de certains caractères apparus après le parsing
+df_para["pays"] = (
+    df_para["pays"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
 )
+df_para["pays"] = df_para["pays"].map(countries_en_fr_cio)
 
-df_all["Country"] = df_all["Country"].map(countries_en_fr_cio)
+#Ajout manuel des athlètes russes et biélorusses (tous deux ont concouru sous bannière neutre)
+df_para.loc[len(df_para)] = ['Russie', 88, '2024']
+df_para.loc[len(df_para)] = ['Biélorussie', 8, '2024']
 
-df_all.columns = ["pays", "athletes_paralympiques", "annee"]
-
-df_all.to_pickle("df_athletes_paralympiques.pkl")
+df_para.to_pickle("df_athletes_paralympiques.pkl")

@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from io import StringIO
 
+#Parsing du tableau avec le nombre d'athlètes par pays sur Wikipédia
 def get_medal_table(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -9,7 +10,7 @@ def get_medal_table(year, url):
 
     tables = pd.read_html(StringIO(html))
 
-    # sélectionner le tableau de médailles : contient gold/silver/bronze ET suffisamment de lignes (de sorte à ce qu'il ne prenne pas l'infobox)
+    #sélectionner le tableau avec le nombre d'athletes par pays (c'est le seul tableau de la page avec plus de 100 lignes)
     good = None
     for t in tables:
         if len(t) >= 100:
@@ -21,16 +22,17 @@ def get_medal_table(year, url):
 
     df = good
 
-    # renommage robuste
+    #Renommer les colonnes
     rename = {}
     for col in df.columns:
         lc = str(col).lower()
         if "nation" in lc or "noc" in lc or "team" in lc or "country" in lc:
-            rename[col] = "Country"
-
+            rename[col] = "pays"
+        elif "athletes" in lc:
+            rename[col] = "athletes_olympiques"
     df = df.rename(columns=rename)
-    df = df[["Country", "Athletes"]]
-    df["Year"] = year
+    df = df[["pays", "athletes_olympiques"]]
+    df["annee"] = year
     return df
 
 
@@ -41,12 +43,12 @@ urls = {
     2024: "https://en.wikipedia.org/wiki/2024_Summer_Olympics",
 }
 
-df_all = pd.concat([get_medal_table(y, u) for y, u in urls.items()],
+df_athletes = pd.concat([get_medal_table(y, u) for y, u in urls.items()],
                    ignore_index=True)
 
 #Enlever les nations absentes
 
-df_all = df_all[df_all["Athletes"] > 0]
+df_athletes = df_athletes[df_athletes["athletes_olympiques"] > 0]
 
 #Traduire les noms de pays
 
@@ -284,12 +286,14 @@ countries_en_fr_cio = {
     "Somalia": "Somalie"
 }
 
-df_all["Country"] = (
-    df_all["Country"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
+#Traduction + Suppression de certains caractères apparus après le parsing
+df_athletes["pays"] = (
+    df_athletes["pays"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
 )
+df_athletes["pays"] = df_athletes["pays"].map(countries_en_fr_cio)
 
-df_all["Country"] = df_all["Country"].map(countries_en_fr_cio)
+#Ajout manuel des athlètes russes et biélorusses (tous deux ont concouru sous bannière neutre)
+df_athletes.loc[len(df_athletes)] = ['Russie', 15, '2024']
+df_athletes.loc[len(df_athletes)] = ['Biélorussie', 17, '2024']
 
-df_all.columns = ["pays", "athletes_olympiques", "annee"]
-
-df_all.to_pickle("df_athletes_olympiques.pkl")
+df_athletes.to_pickle("df_athletes_olympiques.pkl")

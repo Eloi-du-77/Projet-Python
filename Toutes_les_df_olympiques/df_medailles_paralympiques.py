@@ -57,7 +57,7 @@ df_para = pd.concat(
     ignore_index=True
 )
 
-
+#Traduction des pays en français (aide de Claude AI pour le dictionnaire)
 countries_en_fr_cio = {
     # --- Nations & territoires CIO ---
     "Afghanistan": "Afghanistan",
@@ -342,11 +342,14 @@ countries_en_fr_cio = {
     "Sri LankaSRI": "Sri Lanka"
 }
 
+#Traduction et suppression de caractères ajoutés par la conversion sur Python
 df_para["pays"] = (
     df_para["pays"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
 )
-
 df_para["pays"] = df_para["pays"].map(countries_en_fr_cio)
 
-print(df_para)
+#Ajout manuel des athlètes russes et biélorusse (tous deux ont concouru sous banière neutre)
+df_para.loc[len(df_para)] = ['Russie', 20, 21, 23, 64, '2024']
+df_para.loc[len(df_para)] = ['Biélorussie', 6, 1, 0, 7, '2024']
+
 df_para.to_pickle("df_medailles_paralympiques.pkl")
