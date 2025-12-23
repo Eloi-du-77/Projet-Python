@@ -131,8 +131,11 @@ plt.show()
 #Corrélation entre les composantes principales et le score paralympique
 from scipy.stats import pearsonr
 
-corr_pc1, pval_pc1 = pearsonr(df_ACP['PC1'], df_ACP['score_paralympique'])
-corr_pc2, pval_pc2 = pearsonr(df_ACP['PC2'], df_ACP['score_paralympique'])
+#Enlever les NaN éventuels
+df_ACP_clean = df_ACP.dropna(subset=['score_paralympique'])
+
+corr_pc1, pval_pc1 = pearsonr(df_ACP_clean['PC1'], df_ACP_clean['score_paralympique'])
+corr_pc2, pval_pc2 = pearsonr(df_ACP_clean['PC2'], df_ACP_clean['score_paralympique'])
 
 print("\n" + "="*60)
 print("CORRÉLATION AVEC LE SCORE OLYMPIQUE")
