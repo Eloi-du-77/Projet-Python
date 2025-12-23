@@ -126,11 +126,18 @@ for annee_jo in annees_olympiques:
 
 #Suppression des colonnes des pays n'ayant jamais amené d'athlètes aux jeux olympiques (permet surtout d'enlever les groupes de pays présents dans certaines bases : Afrique du Nord, etc...)
 df_merge = df_merge[df_merge.groupby('pays')['athletes_olympiques'].transform('sum') > 0]
+
+#Gestion d'un bug, la Russie a deux colonne en 2024 (une avec tous ses résultats sportifs, une avec le reste) on les fusionne
+#Sélection des lignes à fusionner
+mask = (df_merge['pays'] == 'Russie') & (df_merge['annee'] == 2024)
+df_Russie_2024 = df_merge[mask]
+#Remplacement des NaN de l'une par les valeurs de l'autre
+ligne_fusion = df_Russie_2024.iloc[0].combine_first(df_Russie_2024.iloc[1])
+#Ajouter la ligne et supprimer les deux anciennes
+df_merge = df_merge[~mask]
+df_merge = pd.concat([df_merge, ligne_fusion.to_frame().T], ignore_index=True)
+
 df_merge.to_pickle("df_tous_pays.pkl")
-
-print(df_merge[(df_merge['pays'] == 'Russie') & 
-                   (df_merge['annee'].isin([2012, 2016, 2020, 2024]))]['athletes_paralympiques'])
-
 
 
 
