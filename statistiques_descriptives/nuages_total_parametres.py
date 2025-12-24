@@ -8,20 +8,12 @@ pd.set_option('display.max_rows', None)
 # pd.set_option('display.max_colwidth', None)
 
 
-df_tous_pays=pd.read_pickle("df_tous_pays.pkl")
-df_top_30=pd.read_pickle("df_top_30.pkl")
-df_top_10=pd.read_pickle("df_top_10.pkl")
-df_top_12=pd.read_pickle("df_top12_sans_NaN.pkl")
+df_tous_pays=pd.read_pickle("../Toutes_les_df_agregees/df_tous_pays.pkl")
+df_top_10=pd.read_pickle("../Toutes_les_df_agregees/df_top_10.pkl")
+df_top_12=pd.read_pickle("../Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
 #FONCTION DONNANT LE NUAGE ENTRE DEUX PARAMETRES ET LE NOMBRE D'OBSERVATION DES NUAGES
 
 def graphique(a, b, df):
-    """
-    Crée un nuage de points de b en fonction de a pour chaque année
-    a: nom de la colonne en ordonnée (y)
-    b: nom de la colonne en abscisse (x)
-    df : DataFrame contenant les données
-    """
-
     # Créer la figure et les axes
     annees=[2012, 2016, 2020, 2024]
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
@@ -51,10 +43,4 @@ def graphique(a, b, df):
     plt.tight_layout()
     plt.show()
 
-# Appeler la fonction
-graphique("education_par_habitant", 
-          "total_medailles_paralympiques_par_athlete",
-          df_top_30)
-
-graphique("education_par_habitant","total_medailles_paralympiques_par_athlete",df_tous_pays)
 # %%

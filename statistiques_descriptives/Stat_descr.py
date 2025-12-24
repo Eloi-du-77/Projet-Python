@@ -38,10 +38,10 @@ def coef_variation(df):
     variables = [
         'total_medailles_olympiques_par_athlete',
         'total_medailles_paralympiques_par_athlete',
-        'amenagement_territoire_par_habitant',
-        'maladie_invalidite_par_habitant',
-        'loisirs_sports_par_habitant',
-        'education_par_habitant',
+        'moy_amenagement_1995',
+        'moy_maladie_1995',
+        'moy_loisirs_1995',
+        'moy_education_1995',
         'pib_habitant',
         'idh'
     ]
@@ -131,13 +131,14 @@ def affichage_score_totaux(df, titre="Affichage du coefficient de variation des 
 
 affichage_score_totaux(df_top_12)
 
-#fonction qui trouve le score olympique qui minimise le coefficient de variation
-def score_min(df):
+#fonction qui trouve le score de dépense qui minimise le coefficient de variation
+def score_min_var(df):
 
     #fonction à minimiser
     def cv(x):
-        c_or,c_argent,c_bronze=x
-        col = c_or*df['or_olympique_par_athlete']+c_argent*df['argent_olympique_par_athlete']+c_bronze*df['bronze_olympique_par_athlete']
+        c_amenagement,c_education, c_maladie, c_loisirs=x
+        col = c_amenagement*df['moy_amenagement_1995']+c_education*df['moy_education_1995']
+        +c_maladie*df['moy_maladie_1995']+c_loisirs*df['moy_loisirs_1995']
         data = col.dropna()
         cv = np.nan
         if len(data) > 0 and data.mean() != 0:
@@ -149,95 +150,63 @@ def score_min(df):
     {'type': 'ineq', 'fun': lambda x: x[0]},
     {'type': 'ineq', 'fun': lambda x: x[1]},
     {'type': 'ineq', 'fun': lambda x: x[2]},
-]
+    {'type': 'ineq', 'fun': lambda x: x[3]},
+    ]
 
 
-    x0 = [1,1,1]
+    x0 = [1,1,1,1]
     coefficients = minimize(cv, x0, constraints=contrainte)
     return coefficients
 
-print(score_min(df_top_12))
+#fonction qui donne la combinaison linéaire optimale de dépenses pour maximiser le R² d'une régression de score_paralympique sur la combinaison
+def score_max_R(df):
 
+    #fonction à minimiser
+    def R_2(x):
+        c_amenagement,c_education, c_maladie, c_loisirs=x
+        col = c_amenagement*df['moy_amenagement_1995']+c_education*df['moy_education_1995']
+        +c_maladie*df['moy_maladie_1995']+c_loisirs*df['moy_loisirs_1995']
+        data = col.dropna()
+        para = df['score_paralympique']
+        R_2 = np.nan
+        if len(data) > 0 and data.mean() != 0:
+            R_2 = (para.cov(data) / data.var())
+        return -abs(R_2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def stats_descriptives_resultats (df):
-    df_corr = df.copy()
-    # Colonnes résultats JO
-    cols_jo = [
-        'or_olympique_par_athlete', 'argent_olympique_par_athlete', 'bronze_olympique_par_athlete',
-        'total_medailles_olympique_par_athlete', 'or_paralympique_par_athlete',
-        'argent_paralympique_par_athlete', 'bronze_paralympique_par_athlete',
-        'total_medailles_paralympiques_par_athlete',
+    #fonction de contrainte    
+    contrainte =[
+    {'type': 'ineq', 'fun': lambda x: x[0]},
+    {'type': 'ineq', 'fun': lambda x: x[1]},
+    {'type': 'ineq', 'fun': lambda x: x[2]},
+    {'type': 'ineq', 'fun': lambda x: x[3]},
     ]
 
-    # Colonnes autres variables numériques
-    cols_autres = [c for c in df_corr.columns if df_corr[c].dtype in [np.float64, np.int64] and c not in cols_jo]
 
-    # Années des JO
-    annees_jo = sorted(df_corr['annee'].unique())
+    x0 = [1,1,1,1]
+    coefficients = minimize(R_2, x0, constraints=contrainte)
+    return coefficients
 
-    # Calcul des moyennes cumulées avant chaque année pour chaque pays et chaque variable
-    df_moyennes = df_corr.groupby('pays').apply(
-        lambda g: g.sort_values('annee').assign(
-            **{f'{col}_moy_avant': g[col].expanding().mean().shift(1) for col in cols_autres}
-        )
-    ).reset_index(drop=True)
+print(score_min_var(df_top_12))
+print(score_max_R(df_top_12))
 
-    # Garde uniquement les années de JO
-    df_corr = df_moyennes[df_moyennes['annee'].isin(annees_jo)].copy()
 
-    # Colonnes pour corrélation
-    cols_corr = cols_jo + [c+'_moy_avant' for c in cols_autres]
 
-    # Calcul de la matrice de corrélation
-    matrice_corr = df_corr[cols_corr].corr().round(3)  # arrondi à 3 décimales
 
-    # Raccourcir les noms de colonnes pour affichage
-    renoms = {
-        'or_olympique':'Or_O',
-        'argent_olympique':'Arg_O',
-        'bronze_olympique':'Bro_O',
-        'total_medailles_olympiques':'Tot_O',
-        'or_paralympique':'Or_P',
-        'argent_paralympique':'Arg_P',
-        'bronze_paralympique':'Bro_P',
-        'total_medailles_paralympiques':'Tot_P'
-    }
 
-    # Ajouter les autres variables moyennes
-    for c in cols_autres:
-        renoms[c+'_moy_avant'] = c[:10] + '_moy'  # tronquer à 10 caractères max + _moy
 
-    matrice_corr.rename(index=renoms, columns=renoms, inplace=True)
 
-    # Affichage explicatif
-    print("==== MATRICE DE CORRÉLATION (valeurs arrondies et noms raccourcis) ====\n")
-    print("Logique de calcul :")
-    print("- Les colonnes de résultats olympiques/paralympiques ne sont disponibles que tous les 4 ans (années de JO).")
-    print("- La corrélation est calculée entre le résultat de l'année x et la moyenne des autres variables sur toutes les années précédentes.\n")
 
-    print(matrice_corr)
 
-#stats_descriptives_resultats(df_top_12)
+
+
+
+
+
+
+
+
+
+
+
+
+
