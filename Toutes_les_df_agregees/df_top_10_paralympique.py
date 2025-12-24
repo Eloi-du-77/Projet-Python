@@ -33,38 +33,6 @@ top_10_pays = total_medailles_par_pays.nlargest(10, 'total_cumule')['pays'].toli
 # (conserve TOUTES les années pour ces pays)
 df_top_10 = df_tous_pays[df_tous_pays['pays'].isin(top_10_pays)].copy()
 
-#Ne conserver que certaines colonnes
-# Sélectionner uniquement les colonnes spécifiées
-colonnes_a_garder = [
-    'pays',
-    'annee',
-    'or_olympique',
-    'argent_olympique',
-    'bronze_olympique',
-    'total_medailles_olympiques',
-    'or_paralympique',
-    'argent_paralympique',
-    'bronze_paralympique',
-    'total_medailles_paralympiques',
-    'or_olympique_par_athlete',
-    'argent_olympique_par_athlete',
-    'bronze_olympique_par_athlete',
-    'total_medailles_olympiques_par_athlete',
-    'or_paralympique_par_athlete',
-    'argent_paralympique_par_athlete',
-    'bronze_paralympique_par_athlete',
-    'total_medailles_paralympiques_par_athlete',
-    'score_olympique',
-    'score_paralympique',
-    'moy_amenagement_1995',
-    'moy_maladie_1995',
-    'moy_loisirs_1995',
-    'moy_education_1995',
-    'pib_habitant',
-    'idh'
-]
-
-df_top_10 = df_top_10[colonnes_a_garder]
 
 #Ne conserver que les annees olympiques
 df_top_10 = df_top_10[df_top_10['annee'].isin([2012, 2016, 2020, 2024])]

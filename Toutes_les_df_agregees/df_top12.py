@@ -31,7 +31,7 @@ scores_moyens = df_filtre.groupby('pays')['score_paralympique'].mean().sort_valu
 top_12_pays = scores_moyens.head(12).index
 df_top12 = df_filtre[df_filtre['pays'].isin(top_12_pays)]
 
+print(df_top12.columns)
 print(f"Top 12 pays : {list(top_12_pays)}")
 print(f"Nombre de lignes : {len(df_top12)}")
-print(df_top12)
 df_top12.to_pickle("df_top_12_sans_NaN.pkl")
