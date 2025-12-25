@@ -9,20 +9,20 @@ import matplotlib.pyplot as plt
 
 df_tous_pays=pd.read_pickle("df_tous_pays.pkl")
 
-# FILTRAGE AVEC QUE LE TOP 10 DES JEUX PARALYMPIQUES
+# FILTRAGE AVEC QUE LE TOP 10 DU PIB PAR HABITANT MOYEN
 
-# Calculer le total cumulé des scores paralympiques par pays sur la période
+# Calculer la moyenne du pib sur la période
 moyennes_par_pays = df_tous_pays.groupby('pays').agg({
-    'score_paralympique': 'mean',
+    'pib_habitant': 'mean',
     'athletes_paralympiques': 'mean'
 }).reset_index()
 
-moyennes_par_pays.columns = ['pays', 'score_moyen', 'athletes_moyen']
+moyennes_par_pays.columns = ['pays', 'pib_habitant_moyen', 'athletes_moyen']
 
 #Sélection du top 10 en excluant les pays avec en moyenne moins de cinq athlètes
 pays_qualifies = moyennes_par_pays[moyennes_par_pays['athletes_moyen'] >= 5]
 
-pays_qualifies = pays_qualifies.sort_values('score_moyen', ascending=False)
+pays_qualifies = pays_qualifies.sort_values('pib_habitant_moyen', ascending=False)
 
 top_pays = pays_qualifies.head(10)['pays'].tolist()
 

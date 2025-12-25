@@ -7,17 +7,34 @@ pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
 #Ce programme a pour objectif d'afficher le pourcentage de valeurs manquantes pour chaque variable
-df_tous_pays=pd.read_pickle("../Toutes_les_df_agregees/df_tous_pays.pkl")
-df_top_10=pd.read_pickle("../Toutes_les_df_agregees/df_top_10.pkl")
+#df_tous_pays=pd.read_pickle("../Toutes_les_df_agregees/df_tous_pays.pkl")
+#df_top_10=pd.read_pickle("../Toutes_les_df_agregees/df_top_10.pkl")
 
-#Calculer le pourcentage de valeurs manquantes dans les années olympiques pour la table totale et la table que avec le top 10
-df_olymp = df_tous_pays[df_tous_pays['annee'].isin([2012,2016,2020,2024])]
-pourcentage_manquant = (df_olymp.isnull().sum() / len(df_olymp)) * 100
+def pourcentage_valeurs_manquantes(df) :
+    """Calcul du pourcentage de valeurs manquantes dans les années olympiques pour une table df
+    """
+    df_olymp = df[df['annee'].isin([2012,2016,2020,2024])]
 
-pourcentage_manquant_10 = (df_top_10.isnull().sum() / len(df_top_10)) * 100
+    variables_a_garder = [
+        'moy_maladie_2008',
+        'moy_amenagement_2008',
+        'moy_loisirs_2008',
+        'moy_education_2008',
+        'score_paralympique',
+        'score_olympique',
+        'pib_habitant',
+        'idh'
+    ]
+    
+    #Calculer le pourcentage de valeurs manquantes
+    pourcentage_manquant = (df_olymp[variables_a_garder].isnull().sum() / len(df_olymp)) * 100
+    
+    #Mise sous forme de df
+    resultat = pd.DataFrame({
+        'Variable': pourcentage_manquant.index,
+        'Pourcentage de valeurs manquantes': pourcentage_manquant.values
+    })
 
-print("Pourcentage de valeurs manquantes par colonne de df_tous_pays :\n")
-print(pourcentage_manquant.sort_values(ascending=False))
+    return pourcentage_manquant.sort_values(ascending=False)
 
-print("Pourcentage de valeurs manquantes par colonne de df_top_10 :\n")
-print(pourcentage_manquant_10.sort_values(ascending=False))
+#print(pourcentage_valeurs_manquantes(df_top_10))

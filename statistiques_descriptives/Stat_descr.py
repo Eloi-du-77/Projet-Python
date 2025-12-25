@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 from scipy.optimize import minimize
 
-df_tous_pays=pd.read_pickle("../Toutes_les_df_agregees/df_tous_pays.pkl")
-df_top_10=pd.read_pickle("../Toutes_les_df_agregees/df_top_10.pkl")
-df_top_12=pd.read_pickle("../Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
+#df_tous_pays=pd.read_pickle("../Toutes_les_df_agregees/df_tous_pays.pkl")
+#df_top_10=pd.read_pickle("../Toutes_les_df_agregees/df_top_10.pkl")
+#df_top_12=pd.read_pickle("../Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
 
 #Troncage de df_tous_pays avec que les années olympiques
-df_olymp = df_tous_pays[df_tous_pays['annee'].isin([2012,2016,2020,2024])]
+#df_olymp = df_tous_pays[df_tous_pays['annee'].isin([2012,2016,2020,2024])]
 
 #Nombre de valeurs dans chaque base
 def nombre_pays_annee (df):
@@ -16,32 +16,32 @@ def nombre_pays_annee (df):
     couples = df.groupby(['pays', 'annee']).ngroups
     return n_pays, couples
 
-#Affichage
-print("==== Nombre d'observations par db ====\n")
-print("Nombre de pays dans df_tous_pays")
-print(nombre_pays_annee(df_tous_pays)[0])
-print("Nombre de couples annees, pays dans df_tous_pays")
-print(nombre_pays_annee(df_tous_pays)[1])
-print("Nombre de pays dans df_top_10")
-print(nombre_pays_annee(df_top_10)[0])
-print("Nombre de couples annees, pays dans df_top_10")
-print(nombre_pays_annee(df_top_10)[1])
-print("Nombre de pays dans df_top_12")
-print(nombre_pays_annee(df_top_12)[0])
-print("Nombre de couples annees, pays dans df_top_12")
-print(nombre_pays_annee(df_top_12)[1])
+##Affichage
+# print("==== Nombre d'observations par db ====\n")
+# print("Nombre de pays dans df_tous_pays")
+# print(nombre_pays_annee(df_tous_pays)[0])
+# print("Nombre de couples annees, pays dans df_tous_pays")
+# print(nombre_pays_annee(df_tous_pays)[1])
+# print("Nombre de pays dans df_top_10")
+# print(nombre_pays_annee(df_top_10)[0])
+# print("Nombre de couples annees, pays dans df_top_10")
+# print(nombre_pays_annee(df_top_10)[1])
+# print("Nombre de pays dans df_top_12")
+# print(nombre_pays_annee(df_top_12)[0])
+# print("Nombre de couples annees, pays dans df_top_12")
+# print(nombre_pays_annee(df_top_12)[1])
 
 #Il semble alors judicieux de considérer une observation comme un couple (pays*annee) pour quadrupler le nombre d'observations
 
-#Fonction pour comparer les coefficients de variation entre df
+#Fonction pour observer les coefficients de variation des variables
 def coef_variation(df):
     variables = [
         'total_medailles_olympiques_par_athlete',
         'total_medailles_paralympiques_par_athlete',
-        'moy_amenagement_1995',
-        'moy_maladie_1995',
-        'moy_loisirs_1995',
-        'moy_education_1995',
+        'moy_amenagement_2008',
+        'moy_maladie_2008',
+        'moy_loisirs_2008',
+        'moy_education_2008',
         'pib_habitant',
         'idh'
     ]
@@ -75,9 +75,9 @@ def affichage_cv(df, titre="Analyse de variabilité"):
     print("=" * 80)
     print(resultats.to_string(index=False))
 
-affichage_cv(df_tous_pays, titre="Analyse de variabilité pour df_tous_pays")
-affichage_cv(df_top_10, titre="Analyse de variabilité pour df_top_10")
-affichage_cv(df_top_12, titre="Analyse de variabilité pour df_top_12")
+#affichage_cv(df_tous_pays, titre="Analyse de variabilité pour df_tous_pays")
+#affichage_cv(df_top_10, titre="Analyse de variabilité pour df_top_10")
+#affichage_cv(df_top_12, titre="Analyse de variabilité pour df_top_12")
 
 #df_top_12 semble alors le meilleur compromis entre un nombre correct d'observations et une variance plus faible que dans df_tous_pays
 
@@ -113,7 +113,7 @@ def cv_score_total(df) :
     resultats.loc[len(resultats)] = [cv_so, cv_sp, cv_to, cv_tp]
     return(resultats)
 
-cv_score_total(df_top_12)
+#cv_score_total(df_top_12)
 #Affichage du CV des scores et des totaux
 
 def affichage_score_totaux(df, titre="Affichage du coefficient de variation des scores et des totaux sportifs par athlète"):
@@ -129,7 +129,7 @@ def affichage_score_totaux(df, titre="Affichage du coefficient de variation des 
     print("=" * 80)
     print(resultats.to_string(index=False))
 
-affichage_score_totaux(df_top_12)
+#affichage_score_totaux(df_top_12)
 
 #fonction qui trouve le score de dépense qui minimise le coefficient de variation
 def score_min_var(df):
@@ -137,8 +137,8 @@ def score_min_var(df):
     #fonction à minimiser
     def cv(x):
         c_amenagement,c_education, c_maladie, c_loisirs=x
-        col = c_amenagement*df['moy_amenagement_1995']+c_education*df['moy_education_1995']
-        +c_maladie*df['moy_maladie_1995']+c_loisirs*df['moy_loisirs_1995']
+        col = c_amenagement*df['moy_amenagement_2008']+c_education*df['moy_education_2008']
+        +c_maladie*df['moy_maladie_2008']+c_loisirs*df['moy_loisirs_2008']
         data = col.dropna()
         cv = np.nan
         if len(data) > 0 and data.mean() != 0:
@@ -164,8 +164,8 @@ def score_max_R(df):
     #fonction à minimiser
     def R_2(x):
         c_amenagement,c_education, c_maladie, c_loisirs=x
-        col = c_amenagement*df['moy_amenagement_1995']+c_education*df['moy_education_1995']
-        +c_maladie*df['moy_maladie_1995']+c_loisirs*df['moy_loisirs_1995']
+        col = c_amenagement*df['moy_amenagement_2008']+c_education*df['moy_education_2008']
+        +c_maladie*df['moy_maladie_2008']+c_loisirs*df['moy_loisirs_2008']
         data = col.dropna()
         para = df['score_paralympique']
         R_2 = np.nan
@@ -186,8 +186,8 @@ def score_max_R(df):
     coefficients = minimize(R_2, x0, constraints=contrainte)
     return coefficients
 
-print(score_min_var(df_top_12))
-print(score_max_R(df_top_12))
+#print(score_min_var(df_top_12))
+#print(score_max_R(df_top_12))
 
 
 
