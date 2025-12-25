@@ -102,9 +102,6 @@ df_merge=creation_moyenne(df_merge)
 #Suppression des pays n'ayant jamais amené d'athlètes aux jeux olympiques (permet surtout d'enlever les groupes de pays présents dans certaines bases : Afrique du Nord, etc...)
 df_merge = df_merge[df_merge.groupby('pays')['athletes_olympiques'].transform('sum') > 0]
 
-#Suppression des années non olympiques
-df_merge = df_merge[df_merge['annee'].isin([2012,2016,2020,2024])]
-
 #Suppression des variables non ramenées au nombre d'athlètes/habitants
 df_merge = df_merge.drop('or_olympique', axis=1)
 df_merge = df_merge.drop('argent_olympique', axis=1)
@@ -118,10 +115,6 @@ df_merge = df_merge.drop('amenagement_territoire', axis=1)
 df_merge = df_merge.drop('maladie_invalidite', axis=1)
 df_merge = df_merge.drop('loisirs_sports', axis=1)
 df_merge = df_merge.drop('education', axis=1)
-df_merge = df_merge.drop('amenagement_territoire_par_habitant', axis=1)
-df_merge = df_merge.drop('maladie_invalidite_par_habitant', axis=1)
-df_merge = df_merge.drop('loisirs_sports_par_habitant', axis=1)
-df_merge = df_merge.drop('education_par_habitant', axis=1)
 
 #Gestion d'un bug, la Russie a deux colonne en 2024 (une avec tous ses résultats sportifs, une avec le reste) on les fusionne
 #Sélection des lignes à fusionner

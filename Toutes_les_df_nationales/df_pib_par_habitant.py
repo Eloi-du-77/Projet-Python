@@ -2,7 +2,6 @@ import pandas as pd
 
 #Lecture du fichier
 df = pd.read_excel('PIB_par_habitant_par_pays_par_annee.xls', skiprows=3)
-
 #Colonnes qui identifient le pays
 id_cols = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
 
@@ -60,8 +59,11 @@ country_mapping = {
     "Saint-Vincent-et-les Grenadines" :"Saint-Vincent-et-les-Grenadines",
 }
 
+
 #Adaptation du nom des pays et des variables
 df_long['Country Name'] = df_long['Country Name'].replace(country_mapping)
 df_long.columns = ["pays", "code_du_pays", "annee", "pib_habitant"]
+df_long = df_long.drop('code_du_pays', axis=1)
 
-df_long.to_pickle("df_pib_par_habitant.pkl")
+if __name__ == '__main__' :
+    df_long.to_pickle("df_pib_par_habitant.pkl")

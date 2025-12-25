@@ -3,7 +3,7 @@ import requests
 from io import StringIO
 
 #Parsing du tableau avec le nombre d'athlètes par pays sur Wikipédia
-def get_medal_table(year, url):
+def get_athlete_table(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
     html = requests.get(url, headers=headers).text
@@ -43,7 +43,7 @@ urls = {
     2024: "https://en.wikipedia.org/wiki/2024_Summer_Olympics",
 }
 
-df_athletes = pd.concat([get_medal_table(y, u) for y, u in urls.items()],
+df_athletes = pd.concat([get_athlete_table(y, u) for y, u in urls.items()],
                    ignore_index=True)
 
 #Enlever les nations absentes
@@ -296,4 +296,6 @@ df_athletes["pays"] = df_athletes["pays"].map(countries_en_fr_cio)
 df_athletes.loc[len(df_athletes)] = ['Russie', 15, '2024']
 df_athletes.loc[len(df_athletes)] = ['Biélorussie', 17, '2024']
 
-df_athletes.to_pickle("df_athletes_olympiques.pkl")
+
+if __name__ == '__main__':
+    df_athletes.to_pickle("df_athletes_olympiques.pkl")

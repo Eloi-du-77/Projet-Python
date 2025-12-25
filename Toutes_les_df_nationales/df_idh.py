@@ -248,7 +248,6 @@ countries_en_fr = {
     "Tuvalu": "Tuvalu",
     "Somalia": "Somalie"
 }
-
 #Traduction + Suppression des caractères ajoutés après la conversion
 df_long["country"] = (
     df_long["country"].str.replace(r"[^A-Za-z ,\-']", "", regex=True).str.strip()
@@ -258,4 +257,5 @@ df_long["country"] = df_long["country"].map(countries_en_fr)
 #Renommer la colonne country en pays
 df_long.rename(columns={'country': 'pays'}, inplace=True)
 
-df_long.to_pickle("df_idh.pkl")
+if __name__ == '__main__' :
+    df_long.to_pickle("df_idh.pkl")

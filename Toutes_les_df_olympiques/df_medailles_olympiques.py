@@ -275,6 +275,7 @@ df_medailles["pays"] = df_medailles["pays"].map(countries_en_fr_cio)
 #Ajout manuel des athlètes russes et biélorusse (tous deux ont concouru sous banière neutre)
 df_medailles.loc[len(df_medailles)] = ['Russie', 0, 1, 0, 1, '2024']
 df_medailles.loc[len(df_medailles)] = ['Biélorussie', 1, 2, 1, 4, '2024']
+print(df_medailles.query("pays == 'France'"))
 
-
-df_medailles.to_pickle("df_medailles_olympiques.pkl")
+if __name__ == "__main__" :
+    df_medailles.to_pickle("df_medailles_olympiques.pkl")

@@ -321,4 +321,5 @@ df_para["pays"] = df_para["pays"].map(countries_en_fr_cio)
 df_para.loc[len(df_para)] = ['Russie', 88, '2024']
 df_para.loc[len(df_para)] = ['Biélorussie', 8, '2024']
 
-df_para.to_pickle("df_athletes_paralympiques.pkl")
+if __name__ == '__main__':
+    df_para.to_pickle("df_athletes_paralympiques.pkl")

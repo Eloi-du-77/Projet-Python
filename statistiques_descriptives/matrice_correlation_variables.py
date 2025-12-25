@@ -9,19 +9,21 @@ pd.set_option('display.max_colwidth', None)
 
 df_top_12=pd.read_pickle("../Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
 
-
-def stats_descriptives_resultats (df):
+def matrice_correlation (df):
+    #Exclusion des années non olympiques
     df_corr = df.copy()
+    df_corr = df_corr[df_corr['annee'].isin([2012,2016,2020,2024])]
     # Colonnes résultats JO
     cols_jo = [
-        'or_olympique_par_athlete', 'argent_olympique_par_athlete', 'bronze_olympique_par_athlete',
-        'total_medailles_olympiques_par_athlete', 'or_paralympique_par_athlete',
-        'argent_paralympique_par_athlete', 'bronze_paralympique_par_athlete',
-        'total_medailles_paralympiques_par_athlete','score_olympique','score_paralympique'
+        #'or_olympique_par_athlete', 'argent_olympique_par_athlete', 'bronze_olympique_par_athlete',
+        #'total_medailles_olympiques_par_athlete', 'or_paralympique_par_athlete',
+        #'argent_paralympique_par_athlete', 'bronze_paralympique_par_athlete',
+        #'total_medailles_paralympiques_par_athlete',
+        'score_olympique','score_paralympique',
     ]
 
     #Colonnes autres variables numériques
-    cols_autres = ['moy_amenagement_1995','moy_education_1995','moy_loisirs_1995','moy_maladie_1995','score_depense','pib_habitant','idh']
+    cols_autres = ['moy_amenagement_2008','moy_education_2008','moy_loisirs_2008','moy_maladie_2008','pib_habitant','idh']
 
     #Colonnes pour corrélation
     cols_corr = cols_jo + cols_autres
@@ -74,6 +76,6 @@ def stats_descriptives_resultats (df):
     
     return matrice_corr
 
-stats_descriptives_resultats(df_top_12)
+matrice_correlation(df_top_12)
 
 #%%

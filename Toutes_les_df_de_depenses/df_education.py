@@ -1,17 +1,22 @@
 import world_bank_data as wb
 import pandas as pd
 
-# Récupérer les dépenses d'éducation
-df = wb.get_series('SE.XPD.TOTL.GD.ZS', 
+def get_education():
+    #Récupérer les dépenses d'éducation
+    df = wb.get_series('SE.XPD.TOTL.GD.ZS', 
                    date='2010:2023', 
                    simplify_index=True)
 
-# Convertir en DataFrame propre
-df_clean = df.reset_index()
-df_clean.columns = ['pays', 'annee', 'education']
+    #Convertir en DataFrame propre
+    df_clean = df.reset_index()
+    df_clean.columns = ['pays', 'annee', 'education']
 
-# Convertir les annees en entier
-df_clean['annee'] = df_clean['annee'].astype(int)
+    #Convertir les annees en entier
+    df_clean['annee'] = df_clean['annee'].astype(int)
+
+    return df_clean
+
+df_clean=get_education()
 
 #Changer les noms de certains pays
 country_mapping = {
@@ -286,20 +291,7 @@ country_mapping = {
     'Zimbabwe': 'Zimbabwe',
 }
 
-
-
 df_clean['pays'] = df_clean['pays'].replace(country_mapping)
 
-regions_a_exclure = [
-    'Afrique orientale et australe', 'Afrique occidentale et centrale', 'Monde arabe',
-    'Petits États des Caraïbes', 'Europe centrale et Baltique', 'Asie de l\'Est et Pacifique',
-    'Zone euro', 'Europe et Asie centrale', 'Union européenne', 'Revenu élevé', 'Monde',
-    'Amérique latine et Caraïbes', 'Asie du Sud', 'Afrique subsaharienne', 'Amérique du Nord',
-    'Moyen-Orient, Afrique du Nord, Afghanistan et Pakistan', 'Membres de l\'OCDE'
-]
-
-# Exclure les régions
-df_clean = df_clean[~df_clean['pays'].isin(regions_a_exclure)]
-
-
-df_clean.to_pickle("df_education.pkl")
+if __name__ == '__main__' :
+    df_clean.to_pickle("df_education.pkl")
