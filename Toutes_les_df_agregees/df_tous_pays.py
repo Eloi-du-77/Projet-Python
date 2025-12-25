@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
+from fonction_moyenne import creation_moyenne
 
 #Le df qui sera créé sera gigantesque, il recueille presque tous les pays, les années non olympiques et des variables peu utiles par la suite
 #Il sera épuré dans df_top12
 
-# pd.set_option('display.max_columns', None)
-# pd.set_option('display.width', None)
-# pd.set_option('display.max_colwidth', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', None)
 
 #Import des df
 df_medailles_olympiques=pd.read_pickle("../Toutes_les_df_olympiques/df_medailles_olympiques.pkl")
@@ -95,37 +96,32 @@ df_merge['score_olympique'] = (3 * df_merge['or_olympique_par_athlete'] +
                                  2 * df_merge['argent_olympique_par_athlete'] + 
                                  df_merge['bronze_olympique_par_athlete'])
 
-#Création d'une variable de moyenne de dépenses depuis 1995
+#Création d'une variable de moyenne de dépenses depuis 2008 (dans un autre fichier pour le bon fonctionnement du Notebook)
+df_merge=creation_moyenne(df_merge)
 
-annees_olympiques = [2012,2016,2020,2024]
-df_merge['moy_education_1995'] = np.nan
-df_merge['moy_loisirs_1995'] = np.nan
-df_merge['moy_amenagement_1995'] = np.nan
-df_merge['moy_maladie_1995'] = np.nan
-
-for annee_jo in annees_olympiques:
-    for pays in df_merge['pays'].unique():
-        #Filtration des données du pays entre 1995 et l'année olympique (exclue)
-        df_avant_annee = (df_merge['pays'] == pays) & (df_merge['annee'] >= 1995) & (df_merge['annee'] < annee_jo)
-        donnees_depuis_1995 = df_merge[df_avant_annee]
-        
-        #Calcul des moyennes si on a des données
-        if len(donnees_depuis_1995) > 0:
-            moy_education = donnees_depuis_1995['education_par_habitant'].mean()
-            moy_loisirs = donnees_depuis_1995['loisirs_sports_par_habitant'].mean()
-            moy_amenagement = donnees_depuis_1995['amenagement_territoire_par_habitant'].mean()
-            moy_maladie = donnees_depuis_1995['maladie_invalidite_par_habitant'].mean()
-            
-            #Ajout du résultat dans les variables
-            pays_annee_jo = (df_merge['pays'] == pays) & (df_merge['annee'] == annee_jo)
-
-            df_merge.loc[pays_annee_jo, 'moy_education_1995'] = moy_education
-            df_merge.loc[pays_annee_jo, 'moy_loisirs_1995'] = moy_loisirs
-            df_merge.loc[pays_annee_jo, 'moy_amenagement_1995'] = moy_amenagement
-            df_merge.loc[pays_annee_jo, 'moy_maladie_1995'] = moy_maladie
-
-#Suppression des colonnes des pays n'ayant jamais amené d'athlètes aux jeux olympiques (permet surtout d'enlever les groupes de pays présents dans certaines bases : Afrique du Nord, etc...)
+#Suppression des pays n'ayant jamais amené d'athlètes aux jeux olympiques (permet surtout d'enlever les groupes de pays présents dans certaines bases : Afrique du Nord, etc...)
 df_merge = df_merge[df_merge.groupby('pays')['athletes_olympiques'].transform('sum') > 0]
+
+#Suppression des années non olympiques
+df_merge = df_merge[df_merge['annee'].isin([2012,2016,2020,2024])]
+
+#Suppression des variables non ramenées au nombre d'athlètes/habitants
+df_merge = df_merge.drop('or_olympique', axis=1)
+df_merge = df_merge.drop('argent_olympique', axis=1)
+df_merge = df_merge.drop('bronze_olympique', axis=1)
+df_merge = df_merge.drop('total_medailles_olympiques', axis=1)
+df_merge = df_merge.drop('or_paralympique', axis=1)
+df_merge = df_merge.drop('argent_paralympique', axis=1)
+df_merge = df_merge.drop('bronze_paralympique', axis=1)
+df_merge = df_merge.drop('total_medailles_paralympiques', axis=1)
+df_merge = df_merge.drop('amenagement_territoire', axis=1)
+df_merge = df_merge.drop('maladie_invalidite', axis=1)
+df_merge = df_merge.drop('loisirs_sports', axis=1)
+df_merge = df_merge.drop('education', axis=1)
+df_merge = df_merge.drop('amenagement_territoire_par_habitant', axis=1)
+df_merge = df_merge.drop('maladie_invalidite_par_habitant', axis=1)
+df_merge = df_merge.drop('loisirs_sports_par_habitant', axis=1)
+df_merge = df_merge.drop('education_par_habitant', axis=1)
 
 #Gestion d'un bug, la Russie a deux colonne en 2024 (une avec tous ses résultats sportifs, une avec le reste) on les fusionne
 #Sélection des lignes à fusionner
@@ -137,7 +133,8 @@ ligne_fusion = df_Russie_2024.iloc[0].combine_first(df_Russie_2024.iloc[1])
 df_merge = df_merge[~mask]
 df_merge = pd.concat([df_merge, ligne_fusion.to_frame().T], ignore_index=True)
 
-df_merge.to_pickle("df_tous_pays.pkl")
+if __name__ == '__main__' :
+    df_merge.to_pickle("df_tous_pays.pkl")
 
 
 
