@@ -5,9 +5,9 @@ from fonction_moyenne import creation_moyenne
 #Le df qui sera créé sera gigantesque, il recueille presque tous les pays, les années non olympiques et des variables peu utiles par la suite
 #Il sera épuré dans df_top12
 
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
+#pd.set_option('display.max_columns', None)
+#pd.set_option('display.width', None)
+#pd.set_option('display.max_colwidth', None)
 
 #Import des df
 df_medailles_olympiques=pd.read_pickle("../Toutes_les_df_olympiques/df_medailles_olympiques.pkl")

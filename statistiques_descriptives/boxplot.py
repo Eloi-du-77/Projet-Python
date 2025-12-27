@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 #%%
-df_top_12=pd.read_pickle("../Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
+#df_top_12=pd.read_pickle("../Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
 
 def boxplot(df, y_var='score_paralympique', titre='Distribution par année', ylabel='Valeur'):
     #Définir les années possibles

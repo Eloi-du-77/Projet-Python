@@ -33,8 +33,10 @@ def nombre_pays_annee (df):
 
 #Il semble alors judicieux de considérer une observation comme un couple (pays*annee) pour quadrupler le nombre d'observations
 
-#Fonction pour observer les coefficients de variation des variables
-def coef_variation(df):
+
+def quotient(df,df_tous_pays):
+    """Fonction pour observer les quotients (écart_type sur la "sous-base")/moyenne sur df_tous_pays des variables
+    """
     variables = [
         'total_medailles_olympiques_par_athlete',
         'total_medailles_paralympiques_par_athlete',
@@ -45,16 +47,18 @@ def coef_variation(df):
         'pib_habitant',
         'idh'
     ]
-    resultats = pd.DataFrame(columns=['Variable', 'Moyenne', 'CV (%)','Observations'])
+    resultats = pd.DataFrame(columns=['Variable', 'Moyenne', 'Quotient (%)','Observations'])
 
     for v in variables:
         #Enlever les valeurs manquantes
-        data = df[v].dropna() 
+        data = df[v].dropna()
+        data_tous_pays=df_tous_pays[v].dropna() 
         if len(data) > 0:
             moyenne = data.mean()
+            moyenne_tous_pays=data_tous_pays.mean()
             ecart_type = data.std()
             variance = data.var()
-            cv = (ecart_type / moyenne * 100) if moyenne != 0 else np.nan
+            cv = (ecart_type / moyenne_tous_pays * 100) if moyenne_tous_pays != 0 else np.nan
             obs = len(data)
 
             resultats.loc[len(resultats)] = [v, moyenne, cv, obs]
@@ -62,26 +66,21 @@ def coef_variation(df):
     
 #Affichage propre du cv et de la moyenne
 def affichage_cv(df, titre="Analyse de variabilité"):
-    resultats = coef_variation(df)
+    resultats = quotient(df)
     print(type(resultats))
-    #Tri par CV décroissant
-    resultats = resultats.sort_values('CV (%)', ascending=False)
+    #Tri par quotient décroissant
+    resultats = resultats.sort_values('Quotient (%)', ascending=False)
     
     #Arrondir les valeurs
     resultats['Moyenne'] = resultats['Moyenne'].round(4)
-    resultats['CV (%)'] = resultats['CV (%)'].round(4)
+    resultats['Quotient (%)'] = resultats['Quotient (%)'].round(4)
     
     print(f"\n{titre}")
     print("=" * 80)
     print(resultats.to_string(index=False))
 
-#affichage_cv(df_tous_pays, titre="Analyse de variabilité pour df_tous_pays")
-#affichage_cv(df_top_10, titre="Analyse de variabilité pour df_top_10")
-#affichage_cv(df_top_12, titre="Analyse de variabilité pour df_top_12")
 
-#df_top_12 semble alors le meilleur compromis entre un nombre correct d'observations et une variance plus faible que dans df_tous_pays
-
-#Coefficient de variation du le score olympique / paralympique et du le total de medailles par athlete
+#Coefficient de variation du score olympique / paralympique et du le total de medailles par athlete
 def cv_score_total(df) :
     resultats = pd.DataFrame(columns=['score_olympique', 'score_paralympique',
     'total_medailles_olympiques_par_athlete', 'total_medailles_paralympiques_par_athlete'])

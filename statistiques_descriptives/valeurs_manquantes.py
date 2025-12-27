@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 
 
-pd.set_option('display.max_rows', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
+# pd.set_option('display.max_rows', None)
+# pd.set_option('display.width', None)
+# pd.set_option('display.max_colwidth', None)
 
 #Ce programme a pour objectif d'afficher le pourcentage de valeurs manquantes pour chaque variable
 #df_tous_pays=pd.read_pickle("../Toutes_les_df_agregees/df_tous_pays.pkl")

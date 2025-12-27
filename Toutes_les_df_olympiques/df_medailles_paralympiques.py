@@ -265,7 +265,7 @@ countries_en_fr_cio = {
 
     #En 2012, les pays sont suivis de leur code en 3 lettres, on l'enlève
 
-"ChinaCHN": "Chine",
+    "ChinaCHN": "Chine",
     "RussiaRUS": "Russie",
     "Great BritainGBR": "Royaume-Uni",
     "UkraineUKR": "Ukraine",
