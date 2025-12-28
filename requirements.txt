@@ -11,3 +11,4 @@ seaborn
 numpy
 eurostat
 world_bank_data
+networkx
