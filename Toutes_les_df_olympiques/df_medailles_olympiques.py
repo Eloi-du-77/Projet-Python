@@ -2,11 +2,8 @@ import pandas as pd
 import requests
 from io import StringIO
 
-#pd.set_option('display.max_columns', None)
-#pd.set_option('display.width', None)
-#pd.set_option('display.max_colwidth', None)
 
-#Parsing des données de Wikipédia pour les médailles olympiques
+#Webscrapping des données de Wikipédia pour les médailles olympiques
 def get_medal_table(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -16,7 +13,7 @@ def get_medal_table(year, url):
 
     #Sélection du tableau de médailles
     #Il doit contenir les colonnes gold/silver/bronze
-    #ET suffisamment de lignes (de sorte à ce qu'il ne prenne pas l'infobox)
+    #et suffisamment de lignes (de sorte à ce qu'il ne prenne pas l'infobox)
     good = None
     for t in tables:
         cols = [c.lower() for c in t.columns.astype(str)]
@@ -276,5 +273,5 @@ df_medailles["pays"] = df_medailles["pays"].map(countries_en_fr_cio)
 df_medailles.loc[len(df_medailles)] = ['Russie', 0, 1, 0, 1, '2024']
 df_medailles.loc[len(df_medailles)] = ['Biélorussie', 1, 2, 1, 4, '2024']
 
-if __name__ == "__main__" :
+if __name__ == "__main__" : #Pour ne pas télécharger le fichier si on éxécute depuis un notebook
     df_medailles.to_pickle("df_medailles_olympiques.pkl")

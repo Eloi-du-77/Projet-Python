@@ -1,12 +1,10 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-#%%
-#df_top_12=pd.read_pickle("../Toutes_les_df_agregees/df_top_12_sans_NaN.pkl")
 
 def boxplot(df, y_var='score_paralympique', titre='Distribution par année', ylabel='Valeur'):
+    """Crée le boxplot d'une variable "score_paralympique" par défaut
+    """
     #Définir les années possibles
     annees_possibles = [2012, 2016, 2020, 2024]
     

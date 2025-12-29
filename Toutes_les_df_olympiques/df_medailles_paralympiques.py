@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from io import StringIO
 
-#Parsing de Wikipédia pour les médailles paralympiques
+#Webscrapping de Wikipédia pour les médailles paralympiques
 def get_paralympic_medal_table(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -353,5 +353,5 @@ df_para.loc[len(df_para)] = ['Russie', 20, 21, 23, 64, '2024']
 df_para.loc[len(df_para)] = ['Biélorussie', 6, 1, 0, 7, '2024']
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': #Pour ne pas télécharger le fichier si on éxécute depuis un notebook
     df_para.to_pickle("df_medailles_paralympiques.pkl")

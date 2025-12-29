@@ -4,6 +4,10 @@ import numpy as np
 from matplotlib.patches import FancyArrowPatch
 
 def graphe_acyclique_explicatif(df) :
+    """Trace le graphe acyclique explicatif de la démarche
+
+    Prend en argument la df
+    """
     corr_jo_jp = (
         df[['score_olympique', 'score_paralympique']]
         .dropna()
@@ -11,7 +15,7 @@ def graphe_acyclique_explicatif(df) :
         .loc['score_olympique', 'score_paralympique']
     )
 
-    print(f"Corrélation score JO ↔ JP : {corr_jo_jp:.3f}")
+    print(f"Corrélation score JO et JP : {corr_jo_jp:.3f}")
     G = nx.DiGraph()
 
     main_nodes = ["Pays", "JO", "JP"]
@@ -32,7 +36,7 @@ def graphe_acyclique_explicatif(df) :
     edges_jp = [("JP", v) for v in jp_vars]
     edges_pays = [("Pays", v) for v in pays_vars]
 
-    # Positions des noeuds
+    #Dire ou seront placés les noeuds du graphe
     pos = {
         "Pays": np.array([0, 0]),
         "JO": np.array([4, 2]),
@@ -47,21 +51,20 @@ def graphe_acyclique_explicatif(df) :
         pos[v] = np.array([-4, 2 + 0.8 - i*1.0])
 
 
-    # Affichage
     plt.figure(figsize=(24, 16))
     ax = plt.gca()
 
-    #Sous-variables arêtes normales
+    #Tracé des arrêtes pour les variables pas "principales" (celles hors de pays, score olympique et paralympique)
     nx.draw_networkx_edges(G, pos, edgelist=edges_jo + edges_jp + edges_pays,
                         arrows=True, arrowstyle='-|>', arrowsize=20, width=1.5, edge_color="black")
 
-    # Ronds principaux
+    #Tracer les cercles principaux (ceux avec les scores et pays)
     node_size_main = 4500
     nx.draw_networkx_nodes(G, pos, nodelist=main_nodes, node_color="salmon",
                         node_shape="o", node_size=node_size_main, edgecolors="black")
     nx.draw_networkx_labels(G, pos, labels={n: n for n in main_nodes}, font_size=14)
 
-    #Rectangles sous-variables
+    #Tracer les rectangles des sous-variables
     def draw_box(label, xy):
         ax.text(xy[0], xy[1], label, ha="center", va="center",
                 fontsize=14,
@@ -71,16 +74,14 @@ def graphe_acyclique_explicatif(df) :
         draw_box(v, pos[v])
 
 
-    # Flèches principales avec ajustement pour toucher les bords des cercles
+    #On trace les flèches principales
     def draw_arrow(src, dst, rad=0, color='black'):
-        # Calcul décalage pour toucher bord
+        #On fait en sorte que les flèches touchent le bord des cases
         start = pos[src]
         end = pos[dst]
         vec = end - start
         length = np.linalg.norm(vec)
-        # rayon du cercle
-        r = np.sqrt(node_size_main)/200  # ajusté empiriquement
-        # décalage start/end
+        r = np.sqrt(node_size_main)/200
         start_adj = start + vec*(r/length)
         end_adj = end - vec*(r/length)
         arrow = FancyArrowPatch(start_adj, end_adj,
@@ -89,15 +90,17 @@ def graphe_acyclique_explicatif(df) :
                                 color=color, linewidth=2)
         ax.add_patch(arrow)
 
-    # Pays → JO et JP
+    #On trace les flèches
+
+    #Pays vers JO et JP
     draw_arrow("Pays", "JO")
     draw_arrow("Pays", "JP")
 
-    # Double flèche JO ↔ JP
+    #Double flèche entre JO et JP
     draw_arrow("JO", "JP", rad=0.2)
     draw_arrow("JP", "JO", rad=-0.2)
 
-    # Étiquette corrélation
+    #Ecrire la corrélation des deux
     ax.text((pos["JO"][0] + pos["JP"][0])/2 + 0.2,
             (pos["JO"][1] + pos["JP"][1])/2,
             f"corr = {corr_jo_jp:.2f}",

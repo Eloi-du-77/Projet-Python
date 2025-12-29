@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from io import StringIO
 
-#Parsing du tableau avec le nombre d'athlètes par pays sur Wikipédia
+#Webscrapping du tableau avec le nombre d'athlètes par pays sur Wikipédia
 def get_athlete_table(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -297,5 +297,5 @@ df_athletes.loc[len(df_athletes)] = ['Russie', 15, '2024']
 df_athletes.loc[len(df_athletes)] = ['Biélorussie', 17, '2024']
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': #Pour ne pas télécharger le fichier si on éxécute depuis un notebook
     df_athletes.to_pickle("df_athletes_olympiques.pkl")

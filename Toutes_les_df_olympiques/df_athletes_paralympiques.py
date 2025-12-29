@@ -3,7 +3,7 @@ import requests
 from io import StringIO
 import re
 
-#Parsing du tableau du nombre d'athletes depuis Wikipédia pour les Jeux 2O12, 2016 et 2020
+#Webscrapping du tableau du nombre d'athletes depuis Wikipédia pour les Jeux 2O12, 2016 et 2020
 def get_number_athletes(year, url):
 
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -321,5 +321,5 @@ df_para["pays"] = df_para["pays"].map(countries_en_fr_cio)
 df_para.loc[len(df_para)] = ['Russie', 88, '2024']
 df_para.loc[len(df_para)] = ['Biélorussie', 8, '2024']
 
-if __name__ == '__main__':
+if __name__ == '__main__': #Pour ne pas télécharger le fichier si on éxécute depuis un notebook
     df_para.to_pickle("df_athletes_paralympiques.pkl")

@@ -15,7 +15,8 @@ def regression_simple(df, param):
 
     df_reg = df[['pays', 'annee', param, 'score_paralympique']].dropna()
 
-    # Vérifier si on doit standardiser
+    #On vérifie si il faut standardiser, comme on utilise cette fonction que pour param = score_paralympique ou param = moy_education_2008, on dit que
+    #si param commence par moy, on standardise
     standardiser = param.startswith('moy_')
     
     if standardiser:
@@ -30,34 +31,34 @@ def regression_simple(df, param):
     
     Y = df_reg['score_paralympique'].values
 
-    # Régression linéaire
+    #On régresse
     model = LinearRegression()
     model.fit(X, Y)
 
-    # Prédictions
+    #Prédictions
     Y_pred = model.predict(X)
 
-    # Calcul des statistiques
+    #Calcul du R², R² ajusté, nombre d'observations
     n = len(Y)
-    k = 1  # nombre de variables explicatives
+    k = 1 
     residuals = Y - Y_pred
     mse = np.sum(residuals**2) / (n - k - 1)
     r2 = model.score(X, Y)
     r2_adj = 1 - (1-r2)*(n-1)/(n-k-1)
     
-    # Erreurs standard
+    #Erreurs standard
     var_X = np.sum((X - X.mean())**2)
     se_slope = np.sqrt(mse / var_X)
     se_intercept = np.sqrt(mse * (1/n + X.mean()**2 / var_X))
 
-    # Statistiques t et p-values
+    #Statistiques t et p valeurs
     t_slope = model.coef_[0] / se_slope
     t_intercept = model.intercept_ / se_intercept
     p_slope = 2 * (1 - stats.t.cdf(abs(t_slope), n - k - 1))
     p_intercept = 2 * (1 - stats.t.cdf(abs(t_intercept), n - k - 1))
 
-    # Intervalles de confiance à 95%
-    t_critical = stats.t.ppf(0.975, n - k - 1)  # valeur critique pour α=0.05 bilatéral
+    #Intervalles de confiance à 95%
+    t_critical = stats.t.ppf(0.975, n - k - 1)  #valeur critique pour alpha=0.05 en test bilatéral
     
     ic_intercept_lower = model.intercept_ - t_critical * se_intercept
     ic_intercept_upper = model.intercept_ + t_critical * se_intercept
@@ -65,7 +66,7 @@ def regression_simple(df, param):
     ic_slope_lower = model.coef_[0] - t_critical * se_slope
     ic_slope_upper = model.coef_[0] + t_critical * se_slope
 
-    # Création du DataFrame de résultats
+    #Création du df de résultats
     resultats = pd.DataFrame({
         'Paramètre': ['Intercept (β₀)', param + note_standardisation + ' (β₁)'],
         'Coefficient': [model.intercept_, model.coef_[0]],
@@ -76,20 +77,20 @@ def regression_simple(df, param):
         'P-value': [p_intercept, p_slope]
     })
 
-    # Affichage des informations générales
-    print("="*80)
-    print("RÉSULTATS DE LA RÉGRESSION LINÉAIRE")
-    print("="*80)
+    #Affichage
+    print(" "*80)
+    print("RÉSULTATS")
+    print(" "*80)
     print(f"\nModèle : score_paralympique = β₀ + β₁ × {param}{note_standardisation} + ε")
     if standardiser:
-        print(f"Note : {param} a été standardisé (moyenne=0, écart-type=1)")
-        print(f"       Le coefficient représente l'effet d'une augmentation d'1 écart-type")
+        print(f"On a standardisé {param} (moyenne=0, écart-type=1)")
+        print(f"Ecart-type avant standardisation : {df_reg[param].std()}")
     print(f"\nNombre d'observations : {n}")
     print(f"R² : {r2:.4f}")
     print(f"R² ajusté : {r2_adj:.4f}")
     print(f"Erreur standard résiduelle : {np.sqrt(mse):.4f}")
 
-    # Retourner aussi le scaler si standardisation
+    #On retourne aussi le scaler si standardisation
     if standardiser:
         return resultats, scaler
     else:
@@ -122,42 +123,42 @@ def plot_regression_simple(df, resultats_df, param):
     Y = df_reg['score_paralympique'].values
     n = len(Y)
     
-    # Extraire les paramètres du DataFrame de résultat
+    #Extraire les paramètres du df de résultat
     if standardiser :
-        resultats_df = resultats_df[0]  # si le DataFrame est le 1er élément du tuple
+        resultats_df = resultats_df[0]  
         intercept = resultats_df.loc[resultats_df['Paramètre'] == 'Intercept (β₀)', 'Coefficient'].iloc[0]
     else :
         intercept = resultats_df.loc[resultats_df['Paramètre'] == 'Intercept (β₀)', 'Coefficient'].values[0]
     
-    # Le nom du paramètre dans resultats_df inclut la note de standardisation
+    #Le nom du paramètre dans resultats_df inclut la note de standardisation
     param_name = param + note_standardisation + ' (β₁)'
     slope = resultats_df.loc[resultats_df['Paramètre'] == param_name, 'Coefficient'].values[0]
     ic_slope_lower = resultats_df.loc[resultats_df['Paramètre'] == param_name, 'IC 95% - Borne inf'].values[0]
     ic_slope_upper = resultats_df.loc[resultats_df['Paramètre'] == param_name, 'IC 95% - Borne sup'].values[0]
     p_value = resultats_df.loc[resultats_df['Paramètre'] == param_name, 'P-value'].values[0]
     
-    # Prédictions
+    #On note la prédiction
     Y_pred = intercept + slope * X
     
-    # Création du graphique
+    #Création du graphique
     fig, ax = plt.subplots(figsize=(12, 8))
     
-    # Points de données avec un style amélioré
+    #Points de données avec un style amélioré
     scatter = ax.scatter(X, Y, alpha=0.6, s=100, edgecolors='black', linewidths=1,
                         c=df_reg['annee'], cmap='viridis', label='Observations')
     
-    # Droite de régression
+    #Droite de régression
     X_sorted = np.sort(X, axis=0)
     Y_pred_sorted = intercept + slope * X_sorted
     ax.plot(X_sorted, Y_pred_sorted, 'r-', linewidth=2.5, 
             label=f'Régression: Y = {intercept:.2f} + {slope:.2f}x')
     
-    # Bandes de confiance pour la pente (illustratives)
-    # Pente min et max de l'IC
+    # Bandes de confiance pour la pente (on a moins de 5% de chances d'être dans ces bandes)
+    #On trace donc la pente min et max de l'IC
     Y_pred_lower = intercept + ic_slope_lower * X_sorted
     Y_pred_upper = intercept + ic_slope_upper * X_sorted
     
-    # Conversion explicite en array numpy float
+    #Conversion
     X_fill = X_sorted.flatten().astype(float)
     Y_lower_fill = Y_pred_lower.flatten().astype(float)
     Y_upper_fill = Y_pred_upper.flatten().astype(float)
@@ -165,9 +166,8 @@ def plot_regression_simple(df, resultats_df, param):
     ax.fill_between(X_fill.flatten(), Y_lower_fill.flatten(), Y_upper_fill.flatten(), 
                      alpha=0.15, color='blue', label=f'IC 95% de β₁ [{ic_slope_lower:.2f}, {ic_slope_upper:.2f}]')
     
-    # Légende des années
     annees_uniques = sorted(df_reg['annee'].unique())
-    markers = ['o', 's', '^', 'D']  # cercle, carré, triangle, diamant
+    markers = ['o', 's', '^', 'x']  #fans de Playstation, nous marquons les points par cercle, carré, triangle, croix
 
     for i, annee in enumerate(annees_uniques):
         mask = df_reg['annee'] == annee
@@ -177,7 +177,7 @@ def plot_regression_simple(df, resultats_df, param):
                   marker=markers[i],
                   label=f'{int(annee)}')
     
-    # Labels et titre et légendes
+    #Labels et titre et légendes
     ax.set_xlabel(x_label, fontsize=13, fontweight='bold')
     ax.set_ylabel('Score Paralympique', fontsize=13, fontweight='bold')
     ax.set_title('Régression linéaire : Score Paralympique vs ' + param, 

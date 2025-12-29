@@ -7,7 +7,7 @@ def get_education():
                    date='2010:2023', 
                    simplify_index=True)
 
-    #Convertir en DataFrame propre
+    #Convertir en df nettoyé
     df_clean = df.reset_index()
     df_clean.columns = ['pays', 'annee', 'education']
 
@@ -293,5 +293,5 @@ country_mapping = {
 
 df_clean['pays'] = df_clean['pays'].replace(country_mapping)
 
-if __name__ == '__main__' :
+if __name__ == '__main__' : #Pour ne pas télécharger le fichier si on éxécute depuis un notebook
     df_clean.to_pickle("df_education.pkl")

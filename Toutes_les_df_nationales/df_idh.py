@@ -1,12 +1,12 @@
 import pandas as pd
 
-#Lecture du fichier
+#On lit le csv
 df = pd.read_csv('IDH_par_pays_par_annee.csv', encoding='cp1252')
 
 #Sélection des colonnes intéressantes
-# Colonnes d'identification
+#Colonnes d'identification
 pays = ['country']
-# Colonnes HDI de 2008 à 2023 (2024 n'existe pas encore dans les données)
+#Colonnes d'IDH de 2008 à 2023 (2024 n'existe pas encore dans les données)
 idh = [f'hdi_{year}' for year in range(2008, 2024)]
 
 #Creer un df sans les colonnes pas intéressantes

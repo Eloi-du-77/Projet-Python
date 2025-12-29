@@ -2,16 +2,6 @@ import pandas as pd
 import numpy as np
 
 
-# pd.set_option('display.max_rows', None)
-# pd.set_option('display.width', None)
-# pd.set_option('display.max_colwidth', None)
-
-#Ce programme a pour objectif d'afficher le pourcentage de valeurs manquantes pour chaque variable
-#df_tous_pays=pd.read_pickle("../Toutes_les_df_agregees/df_tous_pays.pkl")
-#df_top_10=pd.read_pickle("../Toutes_les_df_agregees/df_top_10.pkl")
-#df_top_10_sans_NaN=pd.read_pickle("../Toutes_les_df_agregees/df_top_10_sans_NaN.pkl")
-
-
 def pourcentage_valeurs_manquantes(df) :
     """Calcul du pourcentage de valeurs manquantes dans les années olympiques pour une table df
     """
@@ -28,7 +18,7 @@ def pourcentage_valeurs_manquantes(df) :
         'idh'
     ]
     
-    #Calculer le pourcentage de valeurs manquantes
+    #On calcule le pourcentage de valeurs manquantes
     pourcentage_manquant = (df_olymp[variables_a_garder].isnull().sum() / len(df_olymp)) * 100
     
     #Mise sous forme de df

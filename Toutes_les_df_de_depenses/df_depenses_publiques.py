@@ -3,14 +3,14 @@ import pandas as pd
 
 def get_public_expend():
     df = get_data_df("gov_10a_exp", flags=False, filter_pars={'unit': 'PC_GDP','sector': 'S13',  # Secteur des administrations publiques
-        'na_item': 'TE'   # Total des dépenses
+        'na_item': 'TE'  
         })
 
     df_filtree=df[df['cofog99'].isin(['GF0602','GF0801','GF1001'])]
 
     df_longue = df_filtree.melt(
-        id_vars=['geo\\TIME_PERIOD', 'cofog99'],  # colonnes fixes
-        value_vars=[str(y) for y in range(1995, 2025)],  # colonnes années
+        id_vars=['geo\\TIME_PERIOD', 'cofog99'],  #colonnes de valeur en dollar
+        value_vars=[str(y) for y in range(1995, 2025)],  #colonnes des années
         var_name='annee',
         value_name='depense'
     )
@@ -65,5 +65,5 @@ df_longue = df_longue.pivot_table(
     aggfunc='first'
 ).reset_index()
 
-if __name__ == '__main__':
+if __name__ == '__main__':    #Pour ne pas télécharger le dossier si on éxécute depuis un notebook
     df_longue.to_pickle("df_depenses_publiques.pkl")
