@@ -20,13 +20,14 @@ Dans le projet, nous avons utilisé :
 - Eurostat pour les données de dépenses publiques en Aménagement du territoire, Maladie/Invalidité et Loisirs/Sports
 - World Bank Data pour les données de dépenses publiques en éducation et le PIB par habitant
 - "Programme des Nations Unies pour le développement" pour l'IDH
+- [Is the distribution of Olympic medals truly fair ? Martin Martinez PhD 2024](https://medium.com/@mmvillar/is-the-distribution-of-olympic-medals-truly-fair-378e509bf80e)
 Toutes ces données sont parfaitement publiques.
 
 Présentation du dépot :
 
 Le dépot est composé de:
-- Trois dossiers (Toutes_les_df_de_depenses, Toutes_les_df_olympiques, Toutes_les_df_nationales) qui contiennent les programmes de collecte des données respectivement de dépense publique, de résultats sportifs et de caractéristiques nationales (PIB, IDH)
+- Trois dossiers (Toutes_les_df_de_depenses, Toutes_les_df_nationales, Toutes_les_df_olympiques) qui contiennent les programmes de collecte des données respectivement de dépense publique, de résultats sportifs et de caractéristiques nationales (PIB, IDH)
 - Un dossier de nettoyage et de création de variables nommé Toutes_les_df_agregees
 - Un dossier statistiques_descriptives contenant des matrices de corrélation entre les variables, un programme recensant les valeurs manquantes, un programme donnant les coefficients de variations des variables et un faisant des boîtes à moustaches de variables.
-- Un dossier analyse contenant une ACP et une régression linéaire
-- Un notebook noté ...
+- Un dossier analyse contenant ACP et régressions linéaires
+- Un notebook nommé Notebook_full contenant nos résultats et un autre nommé Notebook_empty pas encore démarré.

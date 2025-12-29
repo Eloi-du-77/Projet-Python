@@ -18,8 +18,6 @@ def graphe_acyclique_explicatif(df) :
     jo_vars = ["Score_olympique"]
     jp_vars = ["Score_paralympique"]
     pays_vars = [
-        "athletes_olympiques",
-        "athletes_paralympiques",
         "idh",
         "pib_habitant",
         'moy_education_2008',

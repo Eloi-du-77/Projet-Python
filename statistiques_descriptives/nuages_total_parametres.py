@@ -32,8 +32,15 @@ def nuage_points(a, df, b="score_paralympique", nom_axe_x="Variable", nom_axe_y=
     #Ajouter les labels
     ax.set_xlabel(nom_axe_x, fontsize=11, fontweight='bold')
     ax.set_ylabel(nom_axe_y, fontsize=11, fontweight='bold')
-    ax.set_title('Nuage de points des pays de df_top_10_sans_NaN\nScore paralympique en fonction de {a}\nToutes années confondues (2012-2024)', 
-                 fontsize=13, fontweight='bold')
+    ax.set_title(
+    f"Nuage de points des pays de df_top_10_sans_NaN\n"
+    f"Score paralympique en fonction de {a}\n"
+    f"Toutes années confondues (2012-2024)",
+    fontsize=13,
+    fontweight='bold'
+)
+
+
     ax.grid(True, alpha=0.3, linestyle='--')
     
     #Afficher le nombre d'observations
