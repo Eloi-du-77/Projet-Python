@@ -43,6 +43,6 @@ Le dépôt est composé de:
     - Un programme traçant l'évolution temporelle des variables (evolution)
 - Un dossier analyse contenant les régressions linéaires et la régression ridge
 - Un dossier images contenant des images qui servent dans le programme (vous pouvez les supprimer, elles sont recrées à chaque éxecution du Notebook)
-- Un notebook nommé Notebook_full contenant nos résultats et un autre nommé Notebook_empty pas encore démarré.
+- Un notebook nommé Notebook_full contenant nos résultats.
 
 Bonne correction !
